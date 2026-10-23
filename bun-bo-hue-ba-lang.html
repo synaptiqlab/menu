@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bún Bò Huế Ba Làng - Nha Trang • Digital Menu</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Be Vietnam Pro"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              cream: '#FDFBF7',
+              warmBg: '#FAF6F0',
+              warmBorder: '#EFE5D8',
+              cardBg: '#FFFFFF',
+              textMain: '#2C221E',
+              textMuted: '#685952',
+              primary: '#C84022',      /* Тёплый терракотово-красный */
+              primaryHover: '#A83218',
+              amber: '#D97706',        /* Насыщенный аппетитный янтарь */
+              amberLight: '#FEF3C7',
+              cornerCool: '#38BDF8',   /* Точечный акцент внешних углов */
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --theme-primary: #C84022;           /* Пряный терракотовый супа Бун Бо */
+      --theme-primary-hover: #A83218;
+      --theme-primary-light: #FFF4EE;
+      --theme-page-bg: #FAF6F0;
+      --theme-header-bg: rgba(253, 251, 247, 0.95);
+      --theme-card-bg: #FFFFFF;
+      --theme-text-main: #2C221E;
+      --theme-text-muted: #685952;
+      --theme-badge-bg: #FFF8EB;
+      --theme-badge-text: #5E3406;
+      --theme-shadow-card: 0 4px 20px -2px rgba(80, 45, 20, 0.05), 0 2px 6px -1px rgba(80, 45, 20, 0.02);
+      --theme-shadow-hover: 0 8px 24px -3px rgba(80, 45, 20, 0.08), 0 3px 8px -2px rgba(80, 45, 20, 0.03);
+    }
+    body {
+      background-color: var(--theme-page-bg);
+      color: var(--theme-text-main);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .modern-card {
+      background-color: var(--theme-card-bg);
+      box-shadow: var(--theme-shadow-card);
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .modern-card:hover {
+      box-shadow: var(--theme-shadow-hover);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .fact-accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .fact-accordion-content.open {
+      max-height: 380px;
+    }
+    .vi-order-badge {
+      letter-spacing: 0.015em;
+    }
+    .smooth-scroll {
+      scroll-behavior: smooth;
+    }
+    /* Тактильный пружинный эффект нажатия для кнопок языков */
+    .lang-tab {
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .lang-tab:active {
+      transform: scale(0.88);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased pb-12 selection:bg-amber-100 selection:text-amber-950">
+
+  <!-- STICKY HEADER: Фирменный стиль заведения в тёплой гамме -->
+  <header class="sticky top-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md shadow-xs transition-all duration-200">
+    <div class="max-w-md mx-auto px-3 py-2 flex items-center justify-between gap-2">
+      
+      <!-- Brand & Restaurant Identity -->
+      <div class="flex items-center gap-2 min-w-0 flex-1">
+        <!-- Фирменная эмблема с акцентом -->
+        <div class="relative flex-shrink-0">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 via-orange-600 to-red-600 flex items-center justify-center text-white font-bold text-base shadow-xs ring-1.5 ring-white/90">
+            🍜
+          </div>
+          <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-amber-400 border border-white rounded-full flex items-center justify-center text-[7px] shadow-3xs font-black text-amber-950">
+            ★
+          </span>
+        </div>
+
+        <!-- Название заведения и стилизованный подзаголовок (без обрезки) -->
+        <div class="min-w-0 flex-1">
+          <h1 class="font-serif font-black text-base text-[#A83218] leading-tight truncate tracking-tight" title="Bún Bò Huế Ba Làng">
+            Bún Bò Huế Ba Làng
+          </h1>
+          <p class="text-[10px] text-stone-500 font-medium tracking-normal truncate leading-tight mt-0.5">
+            Đặc Sản Bún Bò & Phở
+          </p>
+        </div>
+      </div>
+
+      <!-- Language Selector (4 одинаковые кнопки с тактильным эффектом: SVG-флаги + EN) -->
+      <div class="inline-flex rounded-xl bg-[#F0E9DF]/80 p-0.5 border border-[#E2D8CC] shadow-inner flex-shrink-0 gap-0.5">
+        <button onclick="changeLanguage('vi')" id="lang-btn-vi" class="lang-tab w-7 h-7 flex items-center justify-center rounded-lg bg-white shadow-xs scale-105 opacity-100 ring-1 ring-black/5" title="Tiếng Việt (VI)" aria-label="Tiếng Việt">
+          <svg class="w-[18px] h-[12px] rounded-[2px] shadow-3xs overflow-hidden flex-shrink-0" viewBox="0 0 30 20">
+            <rect width="30" height="20" fill="#DA251D"/>
+            <polygon points="15,4 17.35,11.24 11.2,6.76 18.8,6.76 12.65,11.24" fill="#FFFF00"/>
+          </svg>
+        </button>
+        <button onclick="changeLanguage('ru')" id="lang-btn-ru" class="lang-tab w-7 h-7 flex items-center justify-center rounded-lg opacity-50 hover:opacity-100 hover:bg-white/60" title="Русский (RU)" aria-label="Русский">
+          <svg class="w-[18px] h-[12px] rounded-[2px] shadow-3xs overflow-hidden flex-shrink-0" viewBox="0 0 30 20">
+            <rect width="30" height="6.67" fill="#FFFFFF"/>
+            <rect y="6.67" width="30" height="6.67" fill="#0039A6"/>
+            <rect y="13.33" width="30" height="6.67" fill="#D52B1E"/>
+          </svg>
+        </button>
+        <button onclick="changeLanguage('en')" id="lang-btn-en" class="lang-tab w-7 h-7 flex items-center justify-center rounded-lg opacity-50 hover:opacity-100 hover:bg-white/60" title="English (EN)" aria-label="English">
+          <svg class="w-[18px] h-[12px] rounded-[2px] shadow-3xs overflow-hidden flex-shrink-0" viewBox="0 0 60 40">
+            <rect width="60" height="40" fill="#012169"/>
+            <path d="M0,0 L60,40 M60,0 L0,40" stroke="#FFFFFF" stroke-width="8"/>
+            <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="4"/>
+            <path d="M30,0 v40 M0,20 h60" stroke="#FFFFFF" stroke-width="12"/>
+            <path d="M30,0 v40 M0,20 h60" stroke="#C8102E" stroke-width="7"/>
+          </svg>
+        </button>
+        <button onclick="changeLanguage('zh')" id="lang-btn-zh" class="lang-tab w-7 h-7 flex items-center justify-center rounded-lg opacity-50 hover:opacity-100 hover:bg-white/60" title="中文 (ZH)" aria-label="中文">
+          <svg class="w-[18px] h-[12px] rounded-[2px] shadow-3xs overflow-hidden flex-shrink-0" viewBox="0 0 30 20">
+            <rect width="30" height="20" fill="#DE2910"/>
+            <polygon points="5,2 6.1,5.5 3.1,3.4 6.9,3.4 3.9,5.5" fill="#FFDE00"/>
+            <polygon points="10,1.5 10.4,2.7 9.3,2 10.7,2 9.6,2.7" fill="#FFDE00"/>
+            <polygon points="12,3.5 12.4,4.7 11.3,4 12.7,4 11.6,4.7" fill="#FFDE00"/>
+            <polygon points="12,6.5 12.4,7.7 11.3,7 12.7,7 11.6,7.7" fill="#FFDE00"/>
+            <polygon points="10,8.5 10.4,9.7 9.3,9 10.7,9 9.6,9.7" fill="#FFDE00"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Pill Horizontal Ribbon with Scroll Runner (Бегунок категорий) -->
+    <div class="max-w-md mx-auto px-2 pb-2 pt-1 relative">
+      <div class="flex items-center gap-1.5">
+        <!-- Кнопка бегунка влево -->
+        <button 
+          id="cat-scroll-left"
+          onclick="scrollCategories(-160)" 
+          class="flex-shrink-0 w-6 h-7 rounded-full bg-white text-stone-600 flex items-center justify-center transition-all opacity-40 cursor-default focus:outline-none shadow-2xs"
+          title="Предыдущие категории"
+          aria-label="Scroll categories left"
+          disabled
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <nav id="category-pills" class="flex-1 flex gap-1.5 overflow-x-auto no-scrollbar smooth-scroll text-xs font-medium py-1" aria-label="Categories">
+          <!-- Rendered dynamically by JS -->
+        </nav>
+
+        <!-- Кнопка бегунка вправо -->
+        <button 
+          id="cat-scroll-right"
+          onclick="scrollCategories(160)" 
+          class="flex-shrink-0 w-6 h-7 rounded-full bg-white text-stone-600 flex items-center justify-center transition-all opacity-90 hover:scale-105 active:scale-95 focus:outline-none shadow-2xs"
+          title="Следующие категории"
+          aria-label="Scroll categories right"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- QUICK INFO BANNER FOR POINT-AND-ORDER GUIDE -->
+  <div class="max-w-md mx-auto w-full px-3 pt-2.5">
+    <div 
+      class="rounded-2xl p-2.5 flex items-center text-xs shadow-2xs transition-all"
+      style="background-color: var(--theme-badge-bg); color: var(--theme-badge-text);"
+    >
+      <div class="flex items-center gap-2">
+        <span class="text-base flex-shrink-0">👆</span>
+        <span id="order-hint-text" class="text-[11px] leading-snug font-medium">
+          Chỉ tay vào tên tiếng Việt bên dưới để gọi món dễ dàng!
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN MENU CONTAINER (High density: 2-3 text cards simultaneously visible on mobile screen) -->
+  <main class="max-w-md mx-auto w-full px-3 py-3 flex-1 space-y-3" id="menu-container">
+    <!-- Populated by JavaScript -->
+  </main>
+
+  <!-- FOOTER: Physical Address & AION Travel App Button (NO Wi-Fi) -->
+  <footer class="max-w-md mx-auto w-full px-4 text-center text-xs text-stone-500 mt-6 space-y-3 pt-4 pb-6">
+    <p class="italic text-xs" style="color: var(--theme-text-muted);">"Hương vị đậm đà cố đô giữa lòng thành phố biển Nha Trang"</p>
+    
+    <!-- Physical Venue Address (Mandatory requirement) -->
+    <div class="modern-card rounded-2xl p-3 text-left text-stone-700">
+      <div class="flex items-start gap-2.5">
+        <span class="text-base mt-0.5">📍</span>
+        <div class="text-[11px] leading-relaxed">
+          <p id="label-address-title" class="font-bold text-stone-900">Địa chỉ quán / Vị trí:</p>
+          <p id="venue-address" class="font-medium" style="color: var(--theme-text-muted);">43 Điện Biên Phủ, Ba Làng, Bắc Nha Trang</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Organic AION Partnership & Utility Info (On page background, no card plate) -->
+    <div class="text-center space-y-2 pt-2">
+      <div class="space-y-0.5">
+        <p id="aion-supported-text" class="text-[11px] font-medium text-stone-400">
+          Thực đơn được tạo với sự hỗ trợ của AION
+        </p>
+        <p id="aion-title-text" class="text-xs font-bold text-stone-800">
+          Ứng dụng tiện ích cuộc sống nước ngoài
+        </p>
+        <p id="aion-desc-text" class="text-[11px] text-stone-500 leading-snug">
+          Tất cả địa điểm, dịch vụ và tiện ích tại một nơi
+        </p>
+      </div>
+
+      <div class="pt-1">
+        <a 
+          href="https://t.me/AIONTravelBot/app?startapp=ref_COX2XQLL" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          id="aion-btn-link"
+          class="inline-flex items-center justify-center gap-1.5 w-full max-w-[210px] mx-auto py-2 px-3.5 rounded-full text-xs font-semibold shadow-xs hover:opacity-95 active:scale-[0.97] transition-all"
+          style="background-color: var(--theme-primary); color: #ffffff;"
+        >
+          <span class="text-xs">✦</span>
+          <span id="aion-btn-text">Mở AION</span>
+          <svg class="w-3 h-3 ml-0.5 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="text-[10px] text-stone-400 pt-1 flex flex-col sm:flex-row items-center justify-between gap-1">
+      <span>© 2026 Bún Bò Huế Ba Làng • Nha Trang • Digital Mobile Menu</span>
+      <span class="opacity-75">Сайт создан на архитектуре PulseCore by SYNAPTIQ Lab</span>
+    </div>
+  </footer>
+
+  <!-- DATA & LOGIC SCRIPT -->
+  <script>
+    // STRICT RULE: No invented food photos! Clean typographic cards without photos.
+    // FULL TITLES & FULL DESCRIPTIONS (No line-clamp, no truncation).
+    const menuData = [
+      // 1. CATEGORY: BÚN BÒ HUẾ
+      {
+        id: "bun-bo-vien",
+        category: "bun-bo",
+        categoryTitles: {
+          vi: "Bún Bò Huế",
+          ru: "Бун Бо Хюэ",
+          en: "Hue Beef Noodles",
+          zh: "顺化牛肉圆粉"
+        },
+        vietnameseName: "Bún Bò Viên",
+        price: 40000,
+        translations: {
+          vi: {
+            name: "Bún Bò Viên Giòn Dai",
+            desc: "Bò viên giòn dai thơm lừng hạt tiêu đen, sợi bún tròn bóng trong nước dùng sả ớt ruốc Huế đậm đà truyền thống, rau sống ăn kèm tươi ngon.",
+            fact: "Bún bò Huế đặc trưng bởi sợi bún to tròn và nước dùng ninh xương ống bò đậm hương mắm ruốc cùng sả tươi. Bò viên được quết tay dai giòn sần sật, ăn kèm rau chuối thái mỏng."
+          },
+          ru: {
+            name: "Бун Бо с упругими говяжьими фрикадельками",
+            desc: "Пряный хюэский наваристый бульон с лемонграссом и пастой руок, толстая круглая рисовая лапша и сочные говяжьи фрикадельки с черным перцем.",
+            fact: "В отличие от ханойского Фо, в Бун Бо используется толстая круглая лапша и пикантный бульон с лемонграссом и пастой руок. Говяжьи фрикадельки имеют аппетитную упругую текстуру."
+          },
+          en: {
+            name: "Hue Noodle Soup with Beef Meatballs",
+            desc: "Thick round rice noodles in spicy lemongrass-infused beef bone broth served with springy black pepper beef meatballs and fresh herbs.",
+            fact: "Bun Bo Hue originates from the imperial capital of Hue. It features thick noodles and an intensely fragrant broth simmered with lemongrass and fermented shrimp paste, paired with bouncy meatballs."
+          },
+          zh: {
+            name: "顺化弹牙牛肉丸圆粉",
+            desc: "招牌浓香香茅虾酱牛骨红汤，爽滑粗圆米线，搭配手工劲道手打黑椒牛肉丸与新鲜时蔬。",
+            fact: "顺化牛肉粉是越南皇室故都的代表名吃。汤底融入鲜香茅、红辣椒与顺化虾酱，滋味鲜辣浓郁，搭配手工手打牛丸，口感Q弹爽脆。"
+          }
+        }
+      },
+      {
+        id: "bun-gio",
+        category: "bun-bo",
+        vietnameseName: "Bún Giò",
+        price: 40000,
+        translations: {
+          vi: {
+            name: "Bún Giò Heo Béo Bùi",
+            desc: "Khoanh móng giò heo hầm mềm béo ngậy, da giòn sần sật trong nước dùng cay nồng hương sả, ăn cùng bún tươi và rau ghém.",
+            fact: "Khoanh giò heo được hầm kỹ giúp phần gân và da vừa mềm dẻo vừa ngậy béo. Đây là nguyên liệu kinh điển tạo nên linh hồn của tô bún bò Huế truyền thống."
+          },
+          ru: {
+            name: "Бун Бо со свиной рулькой (Бун Зо)",
+            desc: "Томленая нежная свиная рулька с мягкой шкуркой и желеобразными хрящиками в пряном бульоне с лемонграссом и зеленью.",
+            fact: "Свиная рулька (Зо хео) — традиционный элемент супа Бун Бо. Длительное томление делает мясо нежным, а бульон — насыщенным природным коллагеном."
+          },
+          en: {
+            name: "Hue Noodle Soup with Tender Pork Knuckle",
+            desc: "Slow-braised pork knuckle with gelatinous skin and tender meat in rich aromatic lemongrass broth over thick noodles.",
+            fact: "Braised pork shank is a staple in authentic Hue noodles. The slow cooking releases natural collagen, giving the savory broth incredible body and silky depth."
+          },
+          zh: {
+            name: "顺化香浓猪蹄圆粉",
+            desc: "软糯多汁慢火煨猪蹄，胶原蛋白满满，搭配酸辣爽口的香茅红汤与粗米线。",
+            fact: "大块带筋猪蹄经长时间慢火煲制，外皮弹嫩软糯，肥而不腻，与香茅微辣的浓汤交融，回味无穷。"
+          }
+        }
+      },
+      {
+        id: "bun-gio-bo-vien",
+        category: "bun-bo",
+        vietnameseName: "Bún Giò + Bò Viên",
+        price: 55000,
+        translations: {
+          vi: {
+            name: "Bún Giò Heo & Bò Viên",
+            desc: "Sự kết hợp hoàn hảo giữa khoanh giò heo mềm béo và bò viên giòn sần sật đậm đà trong tô bún nước dùng thơm nức.",
+            fact: "Tô bún kết hợp hai kết cấu đối lập thú vị: lớp da giò heo mềm béo tan trong miệng cùng những viên bò dai giòn sần sật thấm đẫm vị sả ớt."
+          },
+          ru: {
+            name: "Бун Бо со свиной рулькой и говяжьими фрикадельками",
+            desc: "Сытная комбинация: мягкая томленая рулька и упругие говяжьи фрикадельки в обжигающе пряном бульоне с лемонграссом.",
+            fact: "Идеальный дуэт текстур: тающая во рту свиная рулька в паре с хрустящими упругими шариками из говядины подарят максимум сытости и вкуса."
+          },
+          en: {
+            name: "Hue Noodles with Pork Knuckle & Beef Meatballs",
+            desc: "Tender slow-simmered pork knuckle combined with springy beef balls in rich Hue spiced soup with herbs.",
+            fact: "A crowd-pleaser combining contrasting textures: luscious melting pork skin paired with bouncy seasoned beef balls in fragrant Hue chili oil broth."
+          },
+          zh: {
+            name: "双拼圆粉：香糯猪蹄 + 劲道牛肉丸",
+            desc: "香糯软滑的炖猪蹄配上爽口弹牙的牛肉丸，层次分明，口感丰富过瘾。",
+            fact: "一次享受两种经典口感：胶质丰腴的猪蹄与爽脆弹牙的牛肉丸在热气腾腾的香茅红汤中完美契合。"
+          }
+        }
+      },
+      {
+        id: "bun-bo",
+        category: "bun-bo",
+        vietnameseName: "Bún Bò",
+        price: 40000,
+        priceDisplay: "35.000₫ - 40.000₫",
+        translations: {
+          vi: {
+            name: "Bún Bò Truyền Thống",
+            desc: "Thịt bò thái mỏng ngọt mềm, sợi bún tròn bóng, nước dùng chuẩn vị xứ Huế thơm nức sả ớt sa tế cay nồng.",
+            fact: "Món ăn quốc hồn quốc túy của miền Trung. Hãy thêm chút ớt sa tế cay xé lưỡi, vắt lát chanh tươi và thả một nắm rau thơm, hoa chuối để thưởng thức đúng điệu."
+          },
+          ru: {
+            name: "Классический Бун Бо с говядиной",
+            desc: "Тонкие сочные ломтики говядины, толстая лапша бун, наваристый бульон с лемонграссом и маслом аннато.",
+            fact: "Классика кулинарного Вьетнама. Местные жители всегда добавляют к нему сок свежего лайма, каплю домашнего соуса сатэ и хрустящие стружки бананового цветка."
+          },
+          en: {
+            name: "Traditional Hue Beef Noodle Soup",
+            desc: "Tender beef slices in deeply flavorful lemongrass and annatto beef broth with thick noodles.",
+            fact: "A cornerstone of Central Vietnamese gastronomy. Best enjoyed with a squeeze of fresh lime, a spoonful of chili satay, and plenty of shredded banana blossom."
+          },
+          zh: {
+            name: "经典顺化传统牛肉圆粉",
+            desc: "鲜嫩切片牛肉浸入慢熬牛骨汤，佐以香茅与红油，香气扑鼻，回味微甜微辣。",
+            fact: "越南中部的国宝级料理。吃之前挤上新鲜青柠汁，加入一小勺自制沙爹辣椒酱与芭蕉花丝，风味瞬间升华。"
+          }
+        }
+      },
+      {
+        id: "bun-bo-gio",
+        category: "bun-bo",
+        vietnameseName: "Bún Bò + Giò",
+        price: 55000,
+        translations: {
+          vi: {
+            name: "Bún Bò Nạm & Giò Heo",
+            desc: "Thịt bò nạm thơm ngọt kết hợp khoanh giò heo hầm mềm béo trong tô bún nóng hổi nghi ngút khói đậm đà gia vị.",
+            fact: "Sự hòa quyện giữa thịt bò ngọt vị và khoanh giò heo béo ngậy tạo nên hương vị bún bò chuẩn mực nhất mà mọi thực khách đều yêu thích."
+          },
+          ru: {
+            name: "Бун Бо с говядиной и свиной рулькой",
+            desc: "Отборная сочная говядина и томленая рулька в глубоком пряном бульоне с зеленью и зеленым луком.",
+            fact: "Самое популярное сочетание во Вьетнаме: насыщенный говяжий навар отлично дополняется нежностью свиной рульки и хрустящей зеленью."
+          },
+          en: {
+            name: "Hue Noodles with Tender Beef & Pork Knuckle",
+            desc: "Flavorful beef slices paired with soft braised pork knuckle in boiling hot spicy broth.",
+            fact: "The quintessential Hue breakfast order: the rich savoriness of beef harmonizes with the decadent braised pork knuckle."
+          },
+          zh: {
+            name: "顺化双鲜：嫩牛肉 + 香酥猪蹄圆粉",
+            desc: "鲜美切片牛肉与大块慢炖猪脚强强联合，香辣浓郁，分量十足。",
+            fact: "顺化当地最受追捧的点餐搭配：牛肉的醇香与猪脚的软滑胶质在香茅高汤中相映成趣。"
+          }
+        }
+      },
+      {
+        id: "bun-suon",
+        category: "bun-bo",
+        vietnameseName: "Bún Sườn",
+        price: 50000,
+        translations: {
+          vi: {
+            name: "Bún Sườn Hầm Đậm Đà",
+            desc: "Từng dẻ sườn được ninh nhừ róc xương, thịt mềm ngọt thấm đượm gia vị thảo mộc thiên nhiên trong nước dùng sả ớt.",
+            fact: "Sườn được hầm chậm nhiều giờ để thịt mềm róc khỏi xương mà không bị bã, giữ trọn vị ngọt tự nhiên vào từng muỗng nước lèo."
+          },
+          ru: {
+            name: "Бун Бо с нежными томлеными ребрышками",
+            desc: "Мясистые свиные ребрышки долгого медленного томления, легко отходящие от косточки, в пряном ароматном бульоне.",
+            fact: "Ребрышки томятся несколько часов на медленном огне, благодаря чему мясо буквально тает на языке, отдавая весь свой сок бульону."
+          },
+          en: {
+            name: "Hue Noodle Soup with Tender Braised Ribs",
+            desc: "Fall-off-the-bone succulent ribs simmered with fragrant spices, served over thick round rice noodles.",
+            fact: "Slow-simmered for hours until the meat effortlessly pulls away from the bone, infusing the broth with savory sweetness."
+          },
+          zh: {
+            name: "浓香鲜美慢煨排骨圆粉",
+            desc: "精选排骨慢火煨至软烂脱骨，肉质醇香软嫩，浸满香浓香茅高汤。",
+            fact: "排骨经过数小时文火细煨，肉质鲜嫩多汁、入口即化，骨髓精华尽融于汤底之中。"
+          }
+        }
+      },
+      {
+        id: "bun-suon-bo-vien",
+        category: "bun-bo",
+        vietnameseName: "Bún Sườn + Bò Viên",
+        price: 60000,
+        translations: {
+          vi: {
+            name: "Bún Sườn Non & Bò Viên",
+            desc: "Sườn hầm mềm ngọt thịt hòa cùng những viên bò viên tiêu đen dai giòn đậm vị trong tô bún cay nồng đậm đà.",
+            fact: "Tô bún đầy đặn mang đến cảm giác thỏa mãn: sườn hầm thơm lừng quyện cùng bò viên giòn dai trên nền nước sả ớt đỏ au bắt mắt."
+          },
+          ru: {
+            name: "Бун Бо с ребрышками и говяжьими фрикадельками",
+            desc: "Сочные нежные ребрышки и упругие говяжьи фрикадельки с черным перцем в горячем пряном супе с травами.",
+            fact: "Прекрасный выбор для любителей мясного разнообразия: тающее мясо ребрышек и плотная пружинящая текстура говяжьих шариков."
+          },
+          en: {
+            name: "Hue Noodles with Braised Ribs & Beef Balls",
+            desc: "Tender ribs meet crunchy peppery beef meatballs in an aromatic spicy Hue soup base.",
+            fact: "A satisfying combo providing both melt-in-mouth braised meat and bouncy beef balls with robust black pepper notes."
+          },
+          zh: {
+            name: "特色双拼：酥香排骨 + 爽口牛丸圆粉",
+            desc: "香浓软烂排骨搭配黑椒鲜香手打牛肉丸，双重肉香，大快朵颐。",
+            fact: "软烂入味的排骨与弹牙紧致的牛肉丸相得益彰，带来层次分明、回味悠长的丰富口感。"
+          }
+        }
+      },
+      {
+        id: "bun-suon-nam-gan",
+        category: "bun-bo",
+        vietnameseName: "Bún Sườn + Nạm + Gân",
+        price: 65000,
+        translations: {
+          vi: {
+            name: "Bún Sườn, Nạm Bò & Gân Trong",
+            desc: "Bộ ba hảo hạng: sườn ngọt mềm róc xương, nạm bò thơm lừng và gân bò trong dẻo dai sần sật bổ dưỡng.",
+            fact: "Gân bò được ninh đến độ trong veo, vừa giòn dai sần sật vừa chứa nhiều collagen tốt cho sức khỏe, kết hợp tuyệt hảo cùng sườn và nạm bò."
+          },
+          ru: {
+            name: "Бун Бо с ребрышками, грудинкой и хрустящими сухожилиями",
+            desc: "Изысканное трио: томленые ребра, сочная мраморная грудинка (нам) и прозрачные упругие сухожилия (ган).",
+            fact: "Говяжьи сухожилия (Ган) во Вьетнаме считаются деликатесом и источником молодости. Их вываривают до янтарной прозрачности и легкого приятного хруста."
+          },
+          en: {
+            name: "Hue Noodles with Ribs, Beef Flank & Tendon",
+            desc: "Trio of braised ribs, tender beef flank, and translucent gelatinous beef tendon in spicy broth.",
+            fact: "Beef tendon (Gân) is celebrated across Vietnam for its chewy texture and collagen benefits, complementing the savory braised flank and ribs."
+          },
+          zh: {
+            name: "三宝尊享：煨排骨 + 鲜牛腩 + 晶莹牛筋",
+            desc: "慢炖排骨、鲜香牛腩肉与晶莹软糯弹牙牛筋的奢华组合，胶原蛋白丰富。",
+            fact: "牛筋经文火慢炖至晶莹剔透，入口兼具糯香与爽脆弹牙，与香嫩牛腩、软烂排骨交融，层次极佳。"
+          }
+        }
+      },
+      {
+        id: "bun-suon-gio",
+        category: "bun-bo",
+        vietnameseName: "Bún Sườn + Giò",
+        price: 70000,
+        translations: {
+          vi: {
+            name: "Bún Sườn & Giò Heo Thượng Hạng",
+            desc: "Tô bún thịnh soạn ngập tràn sườn mềm róc thịt cùng khoanh giò heo béo ngậy đầy đặn trong nước lèo ninh xương ngọt sâu.",
+            fact: "Tô bún hảo hạng cung cấp năng lượng tràn đầy cho cả ngày dài, nước dùng ngập tràn vị ngọt từ xương hầm tự nhiên không pha tạp."
+          },
+          ru: {
+            name: "Бун Бо с королевскими ребрышками и свиной рулькой",
+            desc: "Щедрая порция: отборные томленые ребрышки и крупная рулька в горячем пряном бульоне со свежей зеленью.",
+            fact: "Сытное королевское блюдо, дающее заряд бодрости на весь день. Насыщенный бульон томится всю ночь на свежих сахарных костях."
+          },
+          en: {
+            name: "Hue Noodles with Braised Ribs & Pork Knuckle",
+            desc: "A hearty feast of succulent tender ribs and rich braised pork knuckle in robust lemongrass soup.",
+            fact: "An indulgent bowl offering deep nourishment; the slow-simmered bone broth is rich in minerals and deep savory umami."
+          },
+          zh: {
+            name: "顺化双骄：大排骨 + 炖猪蹄豪华圆粉",
+            desc: "满满大块脱骨排骨搭配香浓大块猪脚，浓郁高汤，能量十足的招牌美味。",
+            fact: "顺化街头深受食客推崇的高能量暖胃盛宴，慢熬骨汤浓郁清甜，肉量充足，每一口都是满满幸福感。"
+          }
+        }
+      },
+      {
+        id: "bun-to-sieu-dac-biet",
+        category: "bun-bo",
+        vietnameseName: "Tô Siêu Đặc Biệt (Bún Bò)",
+        price: 110000,
+        translations: {
+          vi: {
+            name: "Tô Bún Bò Siêu Đặc Biệt Ba Làng",
+            desc: "Đại tiệc ẩm thực trọn vẹn: Sườn non, khoanh giò, bò nạm, gân trong và bò viên ngập tràn trong tô lớn thơm lừng.",
+            fact: "Món ăn 'Signature' của quán Ba Làng dành cho thực khách sành ăn muốn trải nghiệm trọn vẹn toàn bộ tinh hoa topping trong một tô bún khổng lồ khó quên."
+          },
+          ru: {
+            name: "Супер-Особая Чаша Бун Бо Ба Ланг (Giant Bowl)",
+            desc: "Большая чаша со всеми видами мяса: нежные ребра, рулька, сочная грудинка, хрустящие сухожилия и говяжьи фрикадельки.",
+            fact: "Фирменная царская подача от шефа Ба Ланг! В огромной чаше собраны абсолютно все мясные деликатесы заведения в огненно-ароматном бульоне."
+          },
+          en: {
+            name: "Ba Lang Super Special Giant Bowl (Hue Noodles)",
+            desc: "The ultimate feast: tender ribs, pork knuckle, sliced beef flank, beef tendon, and beef balls in an extra-large bowl.",
+            fact: "The crown jewel of Ba Lang kitchen: a grand bowl packing every single premium cut and topping into a steaming, deeply aromatic masterpiece."
+          },
+          zh: {
+            name: "白浪头牌：超级至尊全家福顺化大圆粉",
+            desc: "豪华满贯：大块排骨、酥滑猪蹄、鲜美牛腩、晶莹牛筋与手打牛丸全收录。",
+            fact: "白浪招牌的旗舰之作！超大瓷碗盛装所有精选顶级肉料，一次尝遍顺化风味的所有精华，视觉与味蕾的双重震撼。"
+          }
+        }
+      },
+
+      // 2. CATEGORY: PHỞ
+      {
+        id: "pho-tai-gan-nam",
+        category: "pho",
+        categoryTitles: {
+          vi: "Phở Bò Truyền Thống",
+          ru: "Традиционный Фо Бò",
+          en: "Traditional Pho",
+          zh: "经典越南河粉"
+        },
+        vietnameseName: "Phở Tái (Gân + Nạm)",
+        price: 40000,
+        translations: {
+          vi: {
+            name: "Phở Bò Tái, Gân & Nạm",
+            desc: "Bò tái tươi hồng trần tái lăn, nạm chín thơm béo và gân giòn trong bánh phở mềm mướt cùng nước hầm xương thanh ngọt tự nhiên.",
+            fact: "Phở truyền thống với nước dùng ninh xương ống bò thanh ngọt tự nhiên cùng hoa hồi, quế, thảo quả nướng thơm lừng."
+          },
+          ru: {
+            name: "Фо Бо со свежей говядиной, грудинкой и сухожилиями",
+            desc: "Нежнейшая говядина тай быстрой обварки, томленая грудинка нам и хрустящие сухожилия в чистом прозрачном ароматном бульоне.",
+            fact: "Культовое блюдо Вьетнама. Тонкие ломтики говядины Tái завариваются прямо в тарелке кипящим бульоном, оставаясь сочными и нежными."
+          },
+          en: {
+            name: "Pho with Rare Beef, Flank & Beef Tendon",
+            desc: "Silky flat rice noodles in 12-hour spiced beef bone broth with tender rare beef, cooked flank, and tendon.",
+            fact: "Classic Pho harmony: razor-thin raw beef slices flash-cooked by boiling star-anise spiced broth right as it hits the bowl."
+          },
+          zh: {
+            name: "招牌生牛肉 + 牛腩 + 牛筋河粉",
+            desc: "现烫鲜嫩生牛肉片，搭配香醇熟牛腩与弹牙牛筋，汤清味浓，香气回甘。",
+            fact: "越南最具代表性的国菜。八角、桂皮慢炖牛骨清汤，滚烫浇淋在薄切生牛肉片上，鲜美嫩滑不可言喻。"
+          }
+        }
+      },
+      {
+        id: "pho-gio",
+        category: "pho",
+        vietnameseName: "Phở Giò",
+        price: 40000,
+        translations: {
+          vi: {
+            name: "Phở Giò Heo Nước Trong",
+            desc: "Khoanh giò heo hầm mềm ngậy béo kết hợp cùng bánh phở trắng mịn và nước dùng phở bò ngọt thanh ninh từ thảo mộc.",
+            fact: "Một biến tấu thú vị và độc đáo tại miền Trung: giò heo ngậy béo thưởng thức cùng sợi bánh phở dẻo mềm và hành hoa xanh mướt."
+          },
+          ru: {
+            name: "Фо со свиной рулькой (Фо Зо)",
+            desc: "Томленая рулька в прозрачном говяжьем бульоне с шелковистой рисовой лапшой фо, кинзой и зеленым луком.",
+            fact: "Оригинальная южно-центральная вариация Фо: нежное мясо рульки придает бульону дополнительную мягкость и богатый вкус."
+          },
+          en: {
+            name: "Pho Noodle Soup with Braised Pork Knuckle",
+            desc: "Tender pork knuckle in clear aromatic pho broth with flat rice noodles and freshly chopped scallions.",
+            fact: "A popular Central-Vietnamese adaptation marrying the gelatinous comfort of braised pork knuckle with delicate, spiced Pho broth."
+          },
+          zh: {
+            name: "香醇猪蹄清汤河粉",
+            desc: "慢火熬制带皮软烂猪蹄，配以爽滑顺口越南米粉，骨汤清甜，葱香四溢。",
+            fact: "越南中南部独具特色的融合吃法，将软烂猪脚的醇香融入清甜甘润的河粉骨汤中，别具风味。"
+          }
+        }
+      },
+      {
+        id: "pho-bo-vien",
+        category: "pho",
+        vietnameseName: "Phở Bò Viên",
+        price: 40000,
+        translations: {
+          vi: {
+            name: "Phở Bò Viên Tiêu Đen",
+            desc: "Những viên bò viên dai thơm giòn sần sật, chấm tương đen tương ớt ăn cùng bánh phở mềm mượt trong nước dùng nóng hổi.",
+            fact: "Món phở được trẻ em và giới trẻ cực kỳ yêu thích. Bò viên được chấm cùng tương đen (tương ngọt Hoisin) và tương ớt truyền thống."
+          },
+          ru: {
+            name: "Фо Бо с упругими говяжьими фрикадельками",
+            desc: "Прозрачный наваристый бульон фо, шелковистая лапша и пружинящие говяжьи фрикадельки с черным перцем.",
+            fact: "Фо с фрикадельками традиционно едят, макая кусочки мяса в смесь сладкого соуса хойсин (тыонг ден) и острого соуса чили."
+          },
+          en: {
+            name: "Pho with Springy Beef Meatballs",
+            desc: "Aromatic beef broth with bouncy seasoned meatballs, fresh scallions, and delicate rice noodles.",
+            fact: "A beloved classic. Locals love dipping each sliced beef meatball into a small saucer of sweet hoisin and sriracha chili sauce."
+          },
+          zh: {
+            name: "经典手打牛肉丸清汤河粉",
+            desc: "Q弹多汁的手打黑椒牛肉丸，搭配滑顺扁米粉与飘香清汤，老少皆宜。",
+            fact: "最受年轻食客喜爱的河粉搭配之一。将弹牙牛肉丸蘸上海鲜甜酱与辣椒酱同食，风味倍增。"
+          }
+        }
+      },
+      {
+        id: "pho-tai-nam",
+        category: "pho",
+        vietnameseName: "Phở Tái + Nạm",
+        price: 50000,
+        translations: {
+          vi: {
+            name: "Phở Tái Lăn & Nạm Chín",
+            desc: "Sự cân bằng hoàn hảo giữa thịt bò tái tươi mềm ngọt và nạm bò chín thơm bùi ngậy trong nước dùng phở bò hoa hồi quế nướng.",
+            fact: "Đây là tô phở chuẩn mực nhất được đa số người sành ăn lựa chọn: vị ngọt thanh của thịt tươi tái kết hợp với vị đậm thơm của nạm bò hầm."
+          },
+          ru: {
+            name: "Фо Бо Тай Нам (Свежая говядина и томленая грудинка)",
+            desc: "Классическое сочетание: нежные ломтики свежей говядины быстрой обварки и мягкая вареная грудинка в золотистом бульоне.",
+            fact: "Самый каноничный заказ во вьетнамских фо-кафе: сочный свежий бифштекс Tái и тающая жирная грудинка Nạm в золотистом бульоне."
+          },
+          en: {
+            name: "Pho with Rare Beef & Well-Done Flank (Tai Nam)",
+            desc: "The gold standard: succulent rare eye-of-round slices alongside tender slow-cooked beef flank.",
+            fact: "The ultimate classic Pho combination ordered worldwide, balancing melt-in-your-mouth rare beef with the deep savory flavor of braised flank."
+          },
+          zh: {
+            name: "双味牛肉河粉：生牛肉 + 熟牛腩 (Tái Nạm)",
+            desc: "滚汤烫熟的粉嫩生牛肉与慢熬入味的熟牛腩黄金搭档，肉香四溢，汤头甘甜。",
+            fact: "河粉界公认的黄金标准搭配：生牛肉的鲜嫩多汁与熟牛腩的醇厚肉香融为一体，无可挑剔。"
+          }
+        }
+      },
+      {
+        id: "pho-tai-gan",
+        category: "pho",
+        vietnameseName: "Phở Tái + Gân",
+        price: 50000,
+        translations: {
+          vi: {
+            name: "Phở Tái & Gân Bò Dẻo Giòn",
+            desc: "Thịt bò tái hồng tươi mềm mọng cùng gân bò trong veo dẻo giòn sần sật trong nước dùng phở thanh trong bổ dưỡng.",
+            fact: "Gân bò ninh vừa tới tạo cảm giác giòn giòn sần sật vui miệng, bổ sung collagen dồi dào kết hợp cùng thịt bò tươi ngọt lịm."
+          },
+          ru: {
+            name: "Фо Бо Тай Ган (Свежая говядина и сухожилия)",
+            desc: "Тончайшая парная говядина и прозрачные упругие сухожилия в пряном прозрачном бульоне фо.",
+            fact: "Любимое блюдо гурманов: нежнейшее мясо контрастирует с легким похрустыванием проваренных прозрачных сухожилий."
+          },
+          en: {
+            name: "Pho with Rare Beef & Crunchy Tendon (Tai Gan)",
+            desc: "Tender rare beef slices alongside chewy, collagen-rich translucent beef tendon in aromatic broth.",
+            fact: "A connoisseur's bowl: rich in collagen, pairing velvety rare steak slices with the pleasant textural crunch of braised tendon."
+          },
+          zh: {
+            name: "鲜甜生牛肉 + 晶莹弹滑牛筋河粉 (Tái Gân)",
+            desc: "极品嫩滑生牛肉与富含胶原蛋白的晶莹牛筋，软糯爽脆，回味甘甜。",
+            fact: "老饕挚爱之选：生牛肉鲜嫩欲滴，慢煨牛筋糯中带爽，在浓香清透的牛骨汤中绽放绝妙风味。"
+          }
+        }
+      },
+      {
+        id: "pho-tai-bo-vien",
+        category: "pho",
+        vietnameseName: "Phở Tái + Bò Viên",
+        price: 50000,
+        translations: {
+          vi: {
+            name: "Phở Tái & Bò Viên Thơm Ngon",
+            desc: "Thịt bò tươi mềm ngọt lịm kết hợp bò viên dai thơm tiêu sọ trong tô nước dùng phở bò thanh trong ngọt tủy.",
+            fact: "Bò tái trần nhanh giữ trọn chất ngọt tự nhiên, hòa quyện với những viên bò viên đậm đà tạo nên hương vị quen thuộc ấm áp."
+          },
+          ru: {
+            name: "Фо Бо Тай с фрикадельками (Свежая говядина + Бо Вьен)",
+            desc: "Свежая нежная говядина быстрой обварки и упругие фрикадельки с перцем в горячем бульоне с лапшой фо.",
+            fact: "Мясной дуэт: сочные ломтики молодой говядины и пикантные шарики с молотым перцем в пряном бульоне с бадьяном и корицей."
+          },
+          en: {
+            name: "Pho with Rare Beef & Beef Meatballs",
+            desc: "Fresh thinly sliced rare beef together with peppery beef balls served in steaming spiced broth.",
+            fact: "A vibrant pairing of fresh tender beef and springy beef balls, accented by fresh herbs, bean sprouts, and lime."
+          },
+          zh: {
+            name: "生牛肉 + 手打牛肉丸河粉",
+            desc: "鲜甜生牛肉切片与Q爽黑椒牛肉丸强强结合，口感丰富鲜美。",
+            fact: "新鲜生牛肉以热汤瞬间烫熟，锁住天然肉汁，与爽脆多汁的牛肉丸一同入口，肉香满溢。"
+          }
+        }
+      },
+      {
+        id: "pho-suon",
+        category: "pho",
+        vietnameseName: "Phở Sườn",
+        price: 50000,
+        translations: {
+          vi: {
+            name: "Phở Sườn Bò Hầm Mềm",
+            desc: "Dẻ sườn hầm nhừ róc xương, từng thớ thịt mềm ngọt ngấm trọn thảo mộc hoa hồi quế nướng trong tô phở nóng bốc khói.",
+            fact: "Nước dùng phở nấu từ xương sườn có vị ngọt hậu sâu lắng, thịt sườn hầm thơm phức làm say đắm mọi thực khách."
+          },
+          ru: {
+            name: "Фо с томлеными нежными ребрышками",
+            desc: "Нежнейшие мясные ребрышки, томленые до легкого отделения от кости, в пряном золотистом бульоне фо.",
+            fact: "Мясные ребрышки отдают бульону сладковатый навар, а мясо становится настолько мягким, что тает без ножа."
+          },
+          en: {
+            name: "Pho with Tender Braised Ribs",
+            desc: "Succulent braised ribs that slip right off the bone, served over soft pho noodles in clear herb broth.",
+            fact: "The rib marrow enriches the broth with an earthy natural sweetness, making this a hearty comfort food favorite."
+          },
+          zh: {
+            name: "慢火酥香脱骨排骨河粉",
+            desc: "精选大块排骨炖至肉质酥烂，肉香浓郁，融入清香四溢的传统河粉汤底。",
+            fact: "慢煨排骨骨香浓郁、脱骨软烂，骨髓的天然甘甜让整碗米粉汤头格外醇厚甜润。"
+          }
+        }
+      },
+      {
+        id: "pho-thap-cam",
+        category: "pho",
+        vietnameseName: "Phở Thập Cẩm",
+        price: 60000,
+        translations: {
+          vi: {
+            name: "Phở Bò Thập Cẩm Đầy Đặn",
+            desc: "Hội tụ đầy đủ: bò tái mềm ngọt, nạm chín thơm ngậy, gân dẻo dai và bò viên giòn dai trong tô phở truyền thống nghi ngút khói.",
+            fact: "Tô phở thập cẩm là lựa chọn trọn vẹn nhất để thưởng thức đủ các cung bậc hương vị: mềm ngọt của tái, thơm ngậy của nạm, giòn dai của gân và bò viên."
+          },
+          ru: {
+            name: "Фо Бо Тап Кам (Мясное Ассорти)",
+            desc: "Полная палитра вкусов: свежая говядина тай, томленая грудинка, сухожилия и bò viên в ароматном бульоне со свежей зеленью.",
+            fact: "Традиционное комбо-ассорти 'Тап Кам' позволяет гостю за один раз попробовать все текстуры классического вьетнамского Фо."
+          },
+          en: {
+            name: "Pho Combo Assorted (Thap Cam)",
+            desc: "The complete medley: rare beef, braised flank, tendon, and beef balls in hot spiced beef broth.",
+            fact: "The all-in-one 'Thập Cẩm' bowl lets you savor every single classic texture: soft rare steak, rich flank, chewy tendon, and bouncy meatballs."
+          },
+          zh: {
+            name: "什锦至尊全合一河粉 (Phở Thập Cẩm)",
+            desc: "生牛肉、熟牛腩、弹牙牛筋与手打牛肉丸的大满贯组合，丰盛诱人。",
+            fact: "一次揽获越式河粉全部经典的奢华之选：嫩肉、醇腩、糯筋、爽丸在热气腾腾的牛骨清汤中交织共鸣。"
+          }
+        }
+      },
+      {
+        id: "pho-suon-gio",
+        category: "pho",
+        vietnameseName: "Phở Sườn + Giò",
+        price: 70000,
+        translations: {
+          vi: {
+            name: "Phở Sườn & Giò Heo Thượng Hạng",
+            desc: "Sườn hầm mềm róc xương cùng khoanh giò heo ngậy béo trong nước dùng phở bò thảo quả đậm đà, bổ dưỡng.",
+            fact: "Bát phở thịnh soạn ngập tràn năng lượng, mang lại cảm giác no nê trọn vẹn với sự kết hợp của hai loại topping thượng hạng."
+          },
+          ru: {
+            name: "Фо с томлеными ребрышками и свиной рулькой",
+            desc: "Сытный суп с тающими мясными ребрышками и крупным куском нежной свиной рульки в пряном прозрачном бульоне.",
+            fact: "Праздничная сытная вариация для тех, кто ценит долгие томленые мясные деликатесы в кристально чистом бульоне со свежими травами."
+          },
+          en: {
+            name: "Pho with Braised Ribs & Pork Knuckle",
+            desc: "Generous bowl loaded with slow-simmered tender ribs and rich braised pork shank.",
+            fact: "A hearty feast combining the rich savor of braised ribs and delicate braised pork knuckle with delicate rice noodles."
+          },
+          zh: {
+            name: "豪华双拼：香煨排骨 + 软滑猪蹄河粉",
+            desc: "满满大份脱骨排骨与胶质猪脚的双重肉料盛宴，浓香清润，过瘾解馋。",
+            fact: "肉质软烂的大块排骨与富含胶原蛋白的猪脚交织，为清甜的河粉高汤增添了无与伦比的厚重滋味。"
+          }
+        }
+      },
+      {
+        id: "pho-to-sieu-dac-biet",
+        category: "pho",
+        vietnameseName: "Tô Siêu Đặc Biệt (Phở)",
+        price: 110000,
+        translations: {
+          vi: {
+            name: "Tô Phở Siêu Đặc Biệt Ba Làng",
+            desc: "Tô phở khổng lồ: Sườn hầm, giò heo, bò tái, nạm, gân và bò viên ngập tràn trong nước dùng phở bò gia truyền hảo hạng.",
+            fact: "Tô phở đỉnh cao của quán Ba Làng, quy tụ toàn bộ các loại thịt hảo hạng được chế biến công phu, đem đến trải nghiệm ẩm thực đỉnh cao khó quên."
+          },
+          ru: {
+            name: "Супер-Особая Чаша Фо Ба Ланг (Giant Bowl)",
+            desc: "Гигантская чаша фо со всеми деликатесами: ребра, рулька, свежая говядина, грудинка, сухожилия и bò viên в 18-часовом бульоне.",
+            fact: "Царская подача для истинных ценителей вьетнамской кухни! Невероятно щедрый набор мяса в кристально чистом бульоне 18-часовой варки."
+          },
+          en: {
+            name: "Ba Lang Super Special Giant Bowl (Pho)",
+            desc: "The monumental Pho bowl: loaded with braised ribs, pork knuckle, rare beef, beef flank, tendon, and meatballs.",
+            fact: "The ultimate Pho extravaganza in Nha Trang! Designed for food lovers seeking the complete symphony of flavors and textures in one giant steaming bowl."
+          },
+          zh: {
+            name: "白浪头牌：超级至尊全家福河粉大碗",
+            desc: "至尊旗舰：煨排骨、肥嫩猪脚、鲜生牛肉、熟牛腩、晶莹牛筋与手打牛肉丸全部到齐。",
+            fact: "白浪餐厅的终极排面！汇集店内全部顶级肉品，大碗盛装，汤头鲜浓回甘，是来芽庄不可错过的美食盛宴。"
+          }
+        }
+      },
+
+      // 3. CATEGORY: NƯỚC GIẢI KHÁT (BEVERAGES)
+      {
+        id: "coca-7up",
+        category: "do-uong",
+        categoryTitles: {
+          vi: "Nước Giải Khát",
+          ru: "Напитки",
+          en: "Beverages",
+          zh: "清凉饮品"
+        },
+        vietnameseName: "Coca-Cola / 7Up",
+        price: 15000,
+        translations: {
+          vi: {
+            name: "Coca-Cola / 7Up Ướp Lạnh",
+            desc: "Nước ngọt có gas ướp lạnh sảng khoái, phục vụ kèm ly đá mát lạnh đập tan cơn khát và vị cay nồng.",
+            fact: "Thức uống giải khát mát lạnh lý tưởng sau khi thưởng thức tô bún bò Huế cay nồng hay tô phở nóng hổi."
+          },
+          ru: {
+            name: "Coca-Cola / 7Up со льдом",
+            desc: "Освежающие газированные напитки в банке со стаканом льда.",
+            fact: "Ледяная газировка идеально освежает рецепторы после горячего пряного вьетнамского бульона с перцем чили."
+          },
+          en: {
+            name: "Chilled Coca-Cola / 7Up",
+            desc: "Chilled soft drinks served with a glass of ice to extinguish the spicy heat.",
+            fact: "A crisp, bubbly refresher that perfectly cools down the palate after a spicy bowl of Bun Bo or steaming Pho."
+          },
+          zh: {
+            name: "冰镇可口可乐 / 七喜",
+            desc: "冰爽汽水配冰杯，瞬间驱散暑气与辛辣。",
+            fact: "热腾腾的香辣米粉与冰凉可乐碰撞，冰火交融，解辣又解渴。"
+          }
+        }
+      },
+      {
+        id: "nuoc-thanh-nhiet",
+        category: "do-uong",
+        vietnameseName: "Nước Thanh Nhiệt",
+        price: 15000,
+        translations: {
+          vi: {
+            name: "Nước Thanh Nhiệt Thảo Mộc",
+            desc: "Nấu từ các vị thảo mộc thiên nhiên thanh mát, giải độc mát gan, vị ngọt thanh dịu nhẹ tự nhiên.",
+            fact: "Món nước giải nhiệt dân dã truyền thống của người Việt, giúp làm mát cơ thể, giải nhiệt tức thì trong khí hậu nhiệt đới nắng gió Nha Trang."
+          },
+          ru: {
+            name: "Травяной охлаждающий чай 'Тхань Ньет'",
+            desc: "Освежающий натуральный настой из целебных трав и травяных сборов, очищающий и охлаждающий организм.",
+            fact: "Традиционный вьетнамский травяной напиток для выравнивания баланса 'жара и холода' в организме. Идеально охлаждает в жарком приморском климате Нячанга."
+          },
+          en: {
+            name: "Herbal Cooling Tea (Nuoc Thanh Nhiet)",
+            desc: "Traditional slow-brewed herbal infusion with natural sweetness, detoxifying and refreshing.",
+            fact: "A beloved Vietnamese health tonic crafted from cooling natural herbs to restore inner balance in coastal tropical weather."
+          },
+          zh: {
+            name: "自制传统清热解暑凉茶",
+            desc: "精选天然草本植物慢火熬煮，甘甜清润，清热降火，解毒生津。",
+            fact: "越南民间经典的养生草本凉茶，清凉润喉，在阳光灿烂的芽庄海滨搭配热汤米粉饮用最是沁人心脾。"
+          }
+        }
+      },
+      {
+        id: "nuoc-ngot-chai",
+        category: "do-uong",
+        vietnameseName: "Nước Ngọt Chai",
+        price: 15000,
+        translations: {
+          vi: {
+            name: "Nước Ngọt Chai Thủy Tinh Ướp Lạnh",
+            desc: "Các loại nước ngọt chai thủy tinh truyền thống thơm ngon đậm đà, uống cùng đá lạnh sảng khoái.",
+            fact: "Nước ngọt đóng chai thủy tinh luôn giữ được độ gas căng tràn và hương vị nguyên bản thơm ngon nhất."
+          },
+          ru: {
+            name: "Газированный напиток в стеклянной бутылке",
+            desc: "Классическая газировка в стеклянной бутылке со стаканчиком льда.",
+            fact: "Стеклянная тара сохраняет идеальную газированность и свежесть напитка в лучших традициях азиатских уличных кафе."
+          },
+          en: {
+            name: "Bottled Soft Drink (Glass Bottle)",
+            desc: "Classic refreshing bottled carbonated drink served ice cold.",
+            fact: "Glass-bottled sodas retain maximum fizz and that nostalgic local street-food charm."
+          },
+          zh: {
+            name: "经典玻璃瓶装汽水",
+            desc: "冰爽玻璃瓶装碳酸饮料，气足甘冽，搭配冰块饮用。",
+            fact: "复古玻璃瓶装保留了最充沛的气泡感与纯粹风味，充满越南街头排档的烟火气息。"
+          }
+        }
+      },
+      {
+        id: "nuoc-suoi",
+        category: "do-uong",
+        vietnameseName: "Nước Suối",
+        price: 5000,
+        translations: {
+          vi: {
+            name: "Nước Suối Tinh Khiết",
+            desc: "Nước khoáng tinh khiết đóng chai ướp lạnh, giải khát thanh lọc cơ thể tức thì.",
+            fact: "Nước suối tinh khiết giúp cân bằng khẩu vị trọn vẹn sau bữa ăn đậm đà."
+          },
+          ru: {
+            name: "Минеральная питьевая вода",
+            desc: "Охлажденная бутылка чистой минеральной питьевой воды.",
+            fact: "Чистая минеральная вода для идеального завершения сытной трапезы."
+          },
+          en: {
+            name: "Chilled Bottled Water",
+            desc: "Pure, refreshing bottled mineral water.",
+            fact: "Crisp and hydrating, the simplest way to refresh between dishes."
+          },
+          zh: {
+            name: "清凉瓶装纯净矿泉水",
+            desc: "冰爽瓶装饮用水，纯净甘甜，解渴怡人。",
+            fact: "纯净水能还原味蕾敏锐度，为丰盛的餐后带来清新舒爽体验。"
+          }
+        }
+      }
+    ];
+
+    // UI TRANSLATIONS DICTIONARY
+    const translationsUI = {
+      vi: {
+        allCat: "Tất cả",
+        aboutBtn: "Về món ăn ▾",
+        cultureTitle: "Hương vị & Văn hóa ẩm thực:",
+        orderHint: "Chỉ tay vào tên tiếng Việt bên dưới để gọi món dễ dàng!",
+        addressLabel: "Địa chỉ quán / Vị trí:",
+        aionSupported: "Thực đơn được tạo với sự hỗ trợ của AION",
+        aionTitle: "Ứng dụng tiện ích cuộc sống nước ngoài",
+        aionDesc: "Tất cả địa điểm, dịch vụ và tiện ích tại một nơi",
+        aionBtn: "Mở AION"
+      },
+      ru: {
+        allCat: "Все блюда",
+        aboutBtn: "О блюде ▾",
+        cultureTitle: "История и культура блюда:",
+        orderHint: "Укажите пальцем на вьетнамское название блюда для заказа!",
+        addressLabel: "Адрес заведения:",
+        aionSupported: "Меню создано при поддержке AION",
+        aionTitle: "Приложение для жизни за границей",
+        aionDesc: "Все места, услуги, сервисы в одном месте",
+        aionBtn: "Открыть AION"
+      },
+      en: {
+        allCat: "All Dishes",
+        aboutBtn: "About dish ▾",
+        cultureTitle: "Culinary & Culture Story:",
+        orderHint: "Point to the Vietnamese dish name below to order easily!",
+        addressLabel: "Venue address:",
+        aionSupported: "Menu powered by AION",
+        aionTitle: "Essential app for living abroad",
+        aionDesc: "All places, services, and local utilities in one place",
+        aionBtn: "Open AION"
+      },
+      zh: {
+        allCat: "全部品类",
+        aboutBtn: "菜品故事 ▾",
+        cultureTitle: "美食风味与文化典故:",
+        orderHint: "指着下方的越南语菜名即可轻松点餐！",
+        addressLabel: "餐厅地址:",
+        aionSupported: "本菜单由 AION 鼎力支持制作",
+        aionTitle: "海外旅居生活必备应用",
+        aionDesc: "汇聚周边全部地点、服务与优质设施",
+        aionBtn: "打开 AION"
+      }
+    };
+
+    let currentLang = 'vi';
+    let activeCategory = 'all';
+
+    // PRICE FORMATTER
+    function formatPrice(item) {
+      if (item.priceDisplay) {
+        return item.priceDisplay;
+      }
+      return item.price.toLocaleString('vi-VN') + ' ₫';
+    }
+
+    // CATEGORY EXTRACTION
+    function getCategories() {
+      const cats = [
+        { id: 'all', titles: { vi: 'Tất cả', ru: 'Все блюда', en: 'All Items', zh: '全部' } }
+      ];
+      const seen = new Set();
+      menuData.forEach(item => {
+        if (!seen.has(item.category)) {
+          seen.add(item.category);
+          cats.push({
+            id: item.category,
+            titles: item.categoryTitles
+          });
+        }
+      });
+      return cats;
+    }
+
+    // SCROLL RUNNER (Бегунок категорий)
+    function scrollCategories(offset) {
+      const nav = document.getElementById('category-pills');
+      if (nav) {
+        nav.scrollBy({ left: offset, behavior: 'smooth' });
+        setTimeout(updateScrollRunnerButtons, 250);
+      }
+    }
+
+    function updateScrollRunnerButtons() {
+      const nav = document.getElementById('category-pills');
+      const leftBtn = document.getElementById('cat-scroll-left');
+      const rightBtn = document.getElementById('cat-scroll-right');
+      if (!nav || !leftBtn || !rightBtn) return;
+
+      const atStart = nav.scrollLeft <= 5;
+      const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 5;
+
+      if (atStart) {
+        leftBtn.disabled = true;
+        leftBtn.classList.add('opacity-40', 'cursor-default');
+        leftBtn.classList.remove('opacity-90', 'hover:scale-105', 'active:scale-95', 'shadow-3xs');
+      } else {
+        leftBtn.disabled = false;
+        leftBtn.classList.remove('opacity-40', 'cursor-default');
+        leftBtn.classList.add('opacity-90', 'hover:scale-105', 'active:scale-95', 'shadow-3xs');
+      }
+
+      if (atEnd) {
+        rightBtn.disabled = true;
+        rightBtn.classList.add('opacity-40', 'cursor-default');
+        rightBtn.classList.remove('opacity-90', 'hover:scale-105', 'active:scale-95', 'shadow-3xs');
+      } else {
+        rightBtn.disabled = false;
+        rightBtn.classList.remove('opacity-40', 'cursor-default');
+        rightBtn.classList.add('opacity-90', 'hover:scale-105', 'active:scale-95', 'shadow-3xs');
+      }
+    }
+
+    // RENDER CATEGORY PILLS
+    function renderCategories() {
+      const container = document.getElementById('category-pills');
+      const cats = getCategories();
+      const primaryColor = '#C84022';
+      container.innerHTML = cats.map(cat => {
+        const isSelected = cat.id === activeCategory;
+        const title = cat.titles[currentLang] || cat.titles.vi || cat.titles.en;
+        return `
+          <button 
+            onclick="filterCategory('${cat.id}')"
+            data-category="${cat.id}"
+            style="${isSelected ? `background-color: ${primaryColor}; color: #ffffff;` : 'background-color: #ffffff; color: var(--theme-text-main);'}"
+            class="cat-pill whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs transition-all duration-150 shadow-2xs ${isSelected ? 'font-bold shadow-xs' : 'font-medium hover:bg-stone-50'}"
+          >
+            ${title}
+          </button>
+        `;
+      }).join('');
+      setTimeout(updateScrollRunnerButtons, 50);
+    }
+
+    function filterCategory(catId) {
+      activeCategory = catId;
+      const primaryColor = '#C84022';
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        if (btn.getAttribute('data-category') === catId) {
+          btn.style.backgroundColor = primaryColor;
+          btn.style.color = '#ffffff';
+          btn.className = "cat-pill whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-150 shadow-xs";
+          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          btn.style.backgroundColor = '#ffffff';
+          btn.style.color = 'var(--theme-text-main)';
+          btn.className = "cat-pill whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-150 shadow-2xs hover:bg-stone-50";
+        }
+      });
+      renderMenu();
+      setTimeout(updateScrollRunnerButtons, 200);
+    }
+
+    // RENDER MENU CARDS (Modern Frameless Soft-UI, высокая плотность, без грубых рамок)
+    function renderMenu() {
+      const container = document.getElementById('menu-container');
+      const filtered = activeCategory === 'all' 
+        ? menuData 
+        : menuData.filter(item => item.category === activeCategory);
+
+      const ui = translationsUI[currentLang];
+      const primaryColor = '#C84022';
+      const primaryLight = '#FFF4EE';
+
+      container.innerHTML = filtered.map(item => {
+        const trans = item.translations[currentLang] || item.translations.vi;
+        return `
+          <article class="modern-card rounded-[20px] p-3.5 transition-all duration-200">
+            <div class="flex flex-col gap-1.5">
+              
+              <!-- Header Row: Full Title & Soft Pill Price -->
+              <div class="flex items-start justify-between gap-2.5">
+                <h3 class="font-bold text-[14.5px] leading-snug" style="color: var(--theme-text-main);">
+                  ${trans.name}
+                </h3>
+                <span 
+                  class="font-extrabold text-xs whitespace-nowrap tracking-tight rounded-full px-2.5 py-0.5 flex-shrink-0"
+                  style="background-color: ${primaryLight}; color: ${primaryColor};"
+                >
+                  ${formatPrice(item)}
+                </span>
+              </div>
+
+              <!-- POINT-TO-ORDER BADGE (Полное вьетнамское название с диакритикой, без грубой рамки) -->
+              <div>
+                <div 
+                  class="rounded-lg px-2.5 py-1 inline-flex items-center gap-1.5 max-w-full"
+                  style="background-color: var(--theme-badge-bg); color: var(--theme-badge-text);"
+                >
+                  <svg class="w-3.5 h-2.5 rounded-[1px] shadow-3xs overflow-hidden flex-shrink-0" viewBox="0 0 30 20">
+                    <rect width="30" height="20" fill="#DA251D"/>
+                    <polygon points="15,4 17.35,11.24 11.2,6.76 18.8,6.76 12.65,11.24" fill="#FFFF00"/>
+                  </svg>
+                  <span class="text-[11.5px] font-bold font-sans tracking-wide leading-tight vi-order-badge">
+                    ${(item.translations && item.translations.vi && item.translations.vi.name) ? item.translations.vi.name : item.vietnameseName}
+                  </span>
+                </div>
+              </div>
+
+              <!-- FULL DESCRIPTION (Без line-clamp, естественный мягкий перенос) -->
+              <p class="text-[12px] leading-relaxed pt-0.5" style="color: var(--theme-text-muted);">
+                ${trans.desc}
+              </p>
+
+              <!-- Accordion Toggle Button -->
+              <div class="pt-0.5 flex items-center justify-between">
+                <button 
+                  onclick="toggleAccordion('${item.id}')"
+                  id="btn-accordion-${item.id}"
+                  class="text-[11.5px] font-semibold inline-flex items-center gap-1 group focus:outline-none transition-colors"
+                  style="color: ${primaryColor};"
+                  aria-expanded="false"
+                >
+                  <span>${ui.aboutBtn}</span>
+                  <svg id="arrow-${item.id}" class="w-3 h-3 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- CULTURAL FACTS ACCORDION (RU / EN / ZH / VI) -->
+            <div id="content-${item.id}" class="fact-accordion-content">
+              <div 
+                class="mt-2.5 pt-2 rounded-2xl p-3 text-xs leading-relaxed space-y-1.5"
+                style="background-color: var(--theme-primary-light);"
+              >
+                <div class="flex items-center gap-1.5 font-bold text-[11px]" style="color: ${primaryColor};">
+                  <span>✨</span>
+                  <span class="tracking-tight">${ui.cultureTitle}</span>
+                </div>
+                <p 
+                  class="text-[11.5px] leading-relaxed pl-3 italic border-l-2" 
+                  style="color: var(--theme-text-muted); border-color: ${primaryColor};"
+                >
+                  "${trans.fact}"
+                </p>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // ACCORDION TOGGLE
+    function toggleAccordion(itemId) {
+      const content = document.getElementById(`content-${itemId}`);
+      const arrow = document.getElementById(`arrow-${itemId}`);
+      const btn = document.getElementById(`btn-accordion-${itemId}`);
+      const isOpen = content.classList.contains('open');
+
+      if (isOpen) {
+        content.classList.remove('open');
+        arrow.classList.remove('rotate-180');
+        btn.setAttribute('aria-expanded', 'false');
+      } else {
+        content.classList.add('open');
+        arrow.classList.add('rotate-180');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    // LANGUAGE SWITCHER
+    function changeLanguage(lang) {
+      currentLang = lang;
+      
+      // Update Flag / Language Tab Styles with Spring Animation
+      ['vi', 'ru', 'en', 'zh'].forEach(l => {
+        const btn = document.getElementById(`lang-btn-${l}`);
+        if (!btn) return;
+        if (l === lang) {
+          btn.className = `lang-tab w-7 h-7 flex items-center justify-center rounded-lg bg-white shadow-xs scale-105 opacity-100 ring-1 ring-black/5 text-stone-800`;
+        } else {
+          btn.className = `lang-tab w-7 h-7 flex items-center justify-center rounded-lg opacity-50 hover:opacity-100 hover:bg-white/60 text-stone-700`;
+        }
+      });
+
+      // Update Hint text
+      const ui = translationsUI[lang];
+      document.getElementById('order-hint-text').innerText = ui.orderHint;
+
+      // Update Footer Address & AION Block dynamically
+      const addrLabelEl = document.getElementById('label-address-title');
+      if (addrLabelEl && ui.addressLabel) addrLabelEl.innerText = ui.addressLabel;
+
+      const aionSuppEl = document.getElementById('aion-supported-text');
+      if (aionSuppEl && ui.aionSupported) aionSuppEl.innerText = ui.aionSupported;
+
+      const aionTitleEl = document.getElementById('aion-title-text');
+      if (aionTitleEl && ui.aionTitle) aionTitleEl.innerText = ui.aionTitle;
+
+      const aionDescEl = document.getElementById('aion-desc-text');
+      if (aionDescEl && ui.aionDesc) aionDescEl.innerText = ui.aionDesc;
+
+      const aionBtnEl = document.getElementById('aion-btn-text');
+      if (aionBtnEl && ui.aionBtn) aionBtnEl.innerText = ui.aionBtn;
+
+      // Re-render categories & menu
+      renderCategories();
+      renderMenu();
+    }
+
+    // INITIALIZATION
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCategories();
+      renderMenu();
+
+      const nav = document.getElementById('category-pills');
+      if (nav) {
+        nav.addEventListener('scroll', updateScrollRunnerButtons);
+        window.addEventListener('resize', updateScrollRunnerButtons);
+      }
+    });
+  </script>
+</body>
+</html>
