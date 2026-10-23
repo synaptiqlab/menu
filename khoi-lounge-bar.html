@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title id="page-title">KHÓI Lounge & Cocktail Bar — Digital Menu</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Syne (стильный футуристичный лаунж) + Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Syne:wght@600;700;800&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Be Vietnam Pro"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            display: ['"Syne"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          colors: {
+            lounge: {
+              bg: '#0A0C10',
+              surface: '#12161F',
+              card: '#161C27',
+              border: '#232B3A',
+              neonAmber: '#F59E0B',
+              neonCyan: '#06B6D4',
+              neonPurple: '#A855F7',
+              textMain: '#F3F4F6',
+              textMuted: '#9CA3AF',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-dark: #0A0C10;
+      --card-bg: rgba(22, 28, 39, 0.78);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --glow-color: rgba(245, 158, 11, 0.35);
+      --accent-color: #F59E0B;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #F3F4F6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+
+    /* Интерактивный холст дыма */
+    #smoke-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: auto; /* ловит свайпы и тач-события */
+      opacity: 0.85;
+      mix-blend-mode: screen;
+    }
+
+    /* Фоновый градиент ночного клуба: глубокий угольный зал с рассеянным неоновым светом */
+    .dark-glow-ambient {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: 
+        radial-gradient(circle at 18% 18%, rgba(139, 92, 246, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 82% 28%, rgba(6, 182, 212, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 50% 65%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 10%, #151924 0%, #080A0E 70%, #040507 100%);
+      pointer-events: none;
+    }
+
+    /* Glassmorphism карточки в темно-серых тонах */
+    .lounge-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 20px -5px var(--glow-color);
+      transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .lounge-card:hover {
+      border-color: rgba(245, 158, 11, 0.3);
+      box-shadow: 0 14px 35px -8px rgba(0, 0, 0, 0.85), 0 0 25px -3px var(--glow-color);
+    }
+
+    /* Плавные аккордеоны */
+    .fact-accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .fact-accordion-content.open {
+      max-height: 480px;
+    }
+
+    /* Скрытие полосы скролла */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Тактильная пружинная кнопка */
+    .tap-spring {
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .tap-spring:active {
+      transform: scale(0.92);
+    }
+
+    /* Неоновое свечение элементов */
+    .neon-text-amber {
+      text-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+    }
+    .neon-border-active {
+      border-color: #F59E0B !important;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.45);
+    }
+
+    /* Кастомные радио-кнопки для чаши и крепости */
+    .chip-btn {
+      transition: all 0.18s ease;
+    }
+    .chip-btn.active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: #F59E0B;
+      color: #FDE68A;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Индикатор колец дыма */
+    .smoke-ring {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 1.5px solid #9CA3AF;
+      margin-right: 2px;
+      transition: all 0.2s ease;
+    }
+    .smoke-ring.filled {
+      background: #F59E0B;
+      border-color: #F59E0B;
+      box-shadow: 0 0 6px #F59E0B;
+    }
+  </style>
+</head>
+<body class="selection:bg-amber-500/30 selection:text-amber-200">
+
+  <!-- Фоновый градиент -->
+  <div class="dark-glow-ambient"></div>
+
+  <!-- ИНТЕРАКТИВНЫЙ ХОЛСТ ДЫМА (WebGL/Canvas) -->
+  <canvas id="smoke-canvas"></canvas>
+
+  <!-- ОСНОВНОЙ КОНТЕНТ (Z-INDEX 10) -->
+  <div class="relative z-10 flex flex-col min-h-screen">
+
+    <!-- STICKY HEADER В СТИЛЕ LOUNGE BAR -->
+    <header id="main-header" class="sticky top-0 z-50 bg-[#0A0C10]/85 backdrop-blur-xl border-b border-white/10 shadow-2xl transition-all duration-200">
+      <div class="max-w-md mx-auto px-3.5 py-2.5 flex items-center justify-between gap-2.5">
+        
+        <!-- Логотип и Бренд заведения: Большая плоская буква K (Flat Design) -->
+        <div class="flex items-center gap-3 min-w-0 flex-1">
+          <div class="relative flex-shrink-0 cursor-pointer tap-spring" onclick="spawnSmokeBurst(window.innerWidth/2, 60, 40)" title="KHÓI">
+            <div class="w-11 h-11 rounded-xl bg-yellow-400 text-stone-950 flex items-center justify-center font-display font-black text-2xl tracking-tighter select-none">
+              K
+            </div>
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <h1 class="font-display font-black text-[17px] tracking-tight text-white leading-tight flex items-center gap-1.5 truncate">
+              <span>KHÓI</span>
+              <span class="text-[9px] font-black tracking-widest text-stone-950 uppercase bg-yellow-400 px-1.5 py-0.5 rounded">LOUNGE</span>
+            </h1>
+            <p id="venue-sub" class="text-[10.5px] text-stone-400 font-medium tracking-normal truncate leading-tight mt-0.5">
+              Hookah Craft • Smoky Mixology • Beats
+            </p>
+          </div>
+        </div>
+
+        <!-- ЯЗЫКОВОЙ ПЕРЕКЛЮЧАТЕЛЬ (4 SVG флага) -->
+        <div class="inline-flex rounded-xl bg-white/5 p-0.5 border border-white/10 shadow-inner flex-shrink-0 gap-0.5">
+          <button onclick="changeLanguage('vi')" id="lang-btn-vi" class="tap-spring w-7 h-7 flex items-center justify-center rounded-lg bg-white/15 shadow-xs scale-105 opacity-100 ring-1 ring-amber-400/50" title="Tiếng Việt">
+            <svg class="w-[18px] h-[12px] rounded-[2px] shadow-sm overflow-hidden flex-shrink-0" viewBox="0 0 30 20">
+              <rect width="30" height="20" fill="#DA251D"/>
+              <polygon points="15,4 17.35,11.24 11.2,6.76 18.8,6.76 12.65,11.24" fill="#FFFF00"/>
+            </svg>
+          </button>
+          <button onclick="changeLanguage('ru')" id="lang-btn-ru" class="tap-spring w-7 h-7 flex items-center justify-center rounded-lg opacity-60 hover:opacity-100" title="Русский">
+            <svg class="w-[18px] h-[12px] rounded-[2px] shadow-sm overflow-hidden flex-shrink-0" viewBox="0 0 30 20">
+              <rect width="30" height="6.67" fill="#FFFFFF"/>
+              <rect y="6.67" width="30" height="6.67" fill="#0039A6"/>
+              <rect y="13.33" width="30" height="6.67" fill="#D52B1E"/>
+            </svg>
+          </button>
+          <button onclick="changeLanguage('en')" id="lang-btn-en" class="tap-spring w-7 h-7 flex items-center justify-center rounded-lg opacity-60 hover:opacity-100" title="English">
+            <svg class="w-[18px] h-[12px] rounded-[2px] shadow-sm overflow-hidden flex-shrink-0" viewBox="0 0 60 40">
+              <rect width="60" height="40" fill="#012169"/>
+              <path d="M0,0 L60,40 M60,0 L0,40" stroke="#FFFFFF" stroke-width="8"/>
+              <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="4"/>
+              <path d="M30,0 v40 M0,20 h60" stroke="#FFFFFF" stroke-width="12"/>
+              <path d="M30,0 v40 M0,20 h60" stroke="#C8102E" stroke-width="7"/>
+            </svg>
+          </button>
+          <button onclick="changeLanguage('zh')" id="lang-btn-zh" class="tap-spring w-7 h-7 flex items-center justify-center rounded-lg opacity-60 hover:opacity-100" title="中文">
+            <svg class="w-[18px] h-[12px] rounded-[2px] shadow-sm overflow-hidden flex-shrink-0" viewBox="0 0 30 20">
+              <rect width="30" height="20" fill="#DE2910"/>
+              <polygon points="5,2 6.1,5.5 3.1,3.4 6.9,3.4 3.9,5.5" fill="#FFDE00"/>
+              <polygon points="10,1.5 10.4,2.7 9.3,2 10.7,2 9.6,2.7" fill="#FFDE00"/>
+              <polygon points="12,3.5 12.4,4.7 11.3,4 12.7,4 11.6,4.7" fill="#FFDE00"/>
+              <polygon points="12,6.5 12.4,7.7 11.3,7 12.7,7 11.6,7.7" fill="#FFDE00"/>
+              <polygon points="10,8.5 10.4,9.7 9.3,9 10.7,9 9.6,9.7" fill="#FFDE00"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+
+
+      <!-- ЛЕНТА ОСНОВНЫХ КАТЕГОРИЙ С БЕГУНКОМ -->
+      <div class="max-w-md mx-auto px-2 pb-2 pt-1 relative bg-black/20">
+        <div class="flex items-center gap-1.5">
+          <button id="cat-scroll-left" onclick="scrollCategories(-150)" class="w-6 h-7 rounded-lg bg-white/5 border border-white/10 text-stone-300 flex items-center justify-center transition-all opacity-40 focus:outline-none" disabled>
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <nav id="category-pills" class="flex-1 flex gap-1.5 overflow-x-auto no-scrollbar scroll-smooth text-xs font-medium py-1">
+            <!-- Генерируется скриптом -->
+          </nav>
+
+          <button id="cat-scroll-right" onclick="scrollCategories(150)" class="w-6 h-7 rounded-lg bg-white/5 border border-white/10 text-stone-300 flex items-center justify-center transition-all focus:outline-none">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- СЕКЦИЯ ПОДСКАЗКИ "POINT-TO-ORDER" -->
+    <div class="max-w-md mx-auto w-full px-3.5 pt-3">
+      <div class="rounded-xl p-2.5 bg-amber-500/10 border border-amber-500/25 flex items-center gap-2.5 text-amber-200/90 text-xs shadow-sm">
+        <span class="text-base flex-shrink-0">☝️</span>
+        <p id="order-hint-text" class="leading-tight text-[11.5px]">
+          Укажите пальцем на вьетнамское название в плашке для быстрого заказа официанту.
+        </p>
+      </div>
+    </div>
+
+    <!-- КАТАЛОГ БЛЮД, КОКТЕЙЛЕЙ И КАЛЬЯНОВ -->
+    <main class="max-w-md mx-auto w-full px-3.5 py-3 space-y-3 flex-1">
+      <div id="menu-container" class="space-y-3">
+        <!-- Карточки рендерятся JavaScript -->
+      </div>
+    </main>
+
+    <!-- ПОДВАЛ (FOOTER): АДРЕС, БЛОК AION И ОБЯЗАТЕЛЬНАЯ СТРОКА PULSECORE -->
+    <footer class="mt-8 border-t border-white/10 bg-[#07090C]/90 backdrop-blur-md pt-6 pb-12 px-4 text-center">
+      <div class="max-w-md mx-auto space-y-5">
+        
+        <!-- Физический адрес заведения -->
+        <div class="space-y-1">
+          <p id="label-address-title" class="text-[11px] font-semibold uppercase tracking-wider text-amber-400">
+            Локация и бронирование
+          </p>
+          <div class="inline-flex items-center gap-1.5 text-stone-300 text-xs bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
+            <span class="text-amber-400">📍</span>
+            <span id="venue-address-text">28 An Thượng 2, Mỹ An, Ngũ Hành Sơn, Đà Nẵng</span>
+          </div>
+          <p class="text-[10px] text-stone-500 pt-0.5">
+            Часы работы: 16:00 — 02:00 • Hookah & Cocktails Every Night
+          </p>
+        </div>
+
+        <!-- ОРГАНИЧНЫЙ БЛОК AION (ПРИЛОЖЕНИЕ ДЛЯ ЖИЗНИ ЗА ГРАНИЦЕЙ) -->
+        <div class="pt-3 pb-2 text-center space-y-2">
+          <p id="aion-supported-text" class="text-[11.5px] text-stone-400 font-medium">
+            Меню создано при поддержке AION
+          </p>
+          <h4 id="aion-title-text" class="text-sm font-bold text-white tracking-tight">
+            Приложение для жизни за границей
+          </h4>
+          <p id="aion-desc-text" class="text-[11px] text-stone-400 leading-relaxed max-w-xs mx-auto">
+            Все места, услуги, сервисы в одном месте
+          </p>
+          <div class="pt-1">
+            <a 
+              href="https://t.me/AIONTravelBot/app?startapp=ref_COX2XQLL" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-bold text-xs shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:brightness-110 active:scale-95 transition-all"
+            >
+              <span>🚀</span>
+              <span id="aion-btn-text">Открыть AION</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ОБЯЗАТЕЛЬНЫЙ КОПИРАЙТ И АТРИБУЦИЯ PULSECORE -->
+        <div class="border-t border-white/5 pt-4 flex flex-col sm:flex-row items-center justify-between text-[10px] text-stone-500 gap-1">
+          <p>© 2026 KHÓI Lounge & Bar. All rights reserved.</p>
+          <p class="text-stone-400 font-medium">
+            <a href="https://synaptiqlab.tech/#pricing" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition-colors underline decoration-stone-600 underline-offset-2">
+              Сайт создан на архитектуре PulseCore by SYNAPTIQ Lab
+            </a>
+          </p>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- JAVASCRIPT: ДВИЖОК ДЫМА, МЕНЮ, ВКУСОВОЙ НАВИГАТОР И ПЕРЕВОДЫ -->
+  <script>
+    // ==========================================
+    // 1. ИНТЕРАКТИВНЫЙ ДВИЖОК ДЫМА НА HTML5 CANVAS
+    // ==========================================
+    const canvas = document.getElementById('smoke-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    const maxParticles = 65; // оптимально для мобильных 60 FPS
+    // Клубная палитра неоновых софитов: ультрафиолет, электрик циан, маджента, индиго
+    const clubNeonHues = [272, 188, 315, 220];
+
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Класс частицы клубящегося кальянного дыма
+    class SmokeParticle {
+      constructor(x, y, vx, vy, size, alpha, decay, neonHue) {
+        this.x = x ?? Math.random() * width;
+        this.y = y ?? (height + Math.random() * 50);
+        this.vx = vx ?? (Math.random() - 0.5) * 0.85;
+        this.vy = vy ?? -(0.55 + Math.random() * 1.15);
+        this.size = size ?? (45 + Math.random() * 85);
+        this.maxSize = this.size * 2.8;
+        this.alpha = alpha ?? (0.09 + Math.random() * 0.13);
+        this.baseAlpha = this.alpha;
+        this.decay = decay ?? (0.0006 + Math.random() * 0.0009);
+        this.angle = Math.random() * Math.PI * 2;
+        this.spin = (Math.random() - 0.5) * 0.012;
+        this.neonHue = neonHue ?? clubNeonHues[Math.floor(Math.random() * clubNeonHues.length)];
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.size += 0.42;
+        this.angle += this.spin;
+        this.alpha -= this.decay;
+        this.vx += (Math.random() - 0.5) * 0.04;
+      }
+
+      draw() {
+        if (this.alpha <= 0) return;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle);
+
+        // Настоящий густой кальянный дым (бело-пепельный пар), мягко подсвеченный неоном ночного клуба
+        const rad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+        rad.addColorStop(0, `rgba(244, 247, 255, ${this.alpha * 0.92})`);
+        rad.addColorStop(0.35, `rgba(215, 226, 244, ${this.alpha * 0.62})`);
+        rad.addColorStop(0.72, `hsla(${this.neonHue}, 90%, 65%, ${this.alpha * 0.36})`);
+        rad.addColorStop(1, 'rgba(6, 8, 12, 0)');
+
+        ctx.fillStyle = rad;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // Первоначальное заполнение
+    for (let i = 0; i < maxParticles; i++) {
+      particles.push(new SmokeParticle(
+        Math.random() * width,
+        Math.random() * height,
+        (Math.random() - 0.5) * 0.75,
+        -(0.35 + Math.random() * 0.9),
+        55 + Math.random() * 85,
+        0.06 + Math.random() * 0.09,
+        0.00065
+      ));
+    }
+
+    // Всплеск клубов кальянного дыма при касании
+    function spawnSmokeBurst(x, y, count = 12) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.5 + Math.random() * 2.4;
+        particles.push(new SmokeParticle(
+          x + (Math.random() - 0.5) * 30,
+          y + (Math.random() - 0.5) * 30,
+          Math.cos(angle) * speed,
+          Math.sin(angle) * speed - 0.75,
+          40 + Math.random() * 65,
+          0.19 + Math.random() * 0.12,
+          0.0019
+        ));
+      }
+      if (particles.length > 120) {
+        particles.splice(0, particles.length - 120);
+      }
+    }
+
+    // Интерактивное управление пальцем / мышью
+    let lastPointer = { x: 0, y: 0, time: 0 };
+    function handlePointerInteraction(x, y) {
+      const now = Date.now();
+      if (now - lastPointer.time > 45) {
+        spawnSmokeBurst(x, y, 3);
+        lastPointer = { x, y, time: now };
+      }
+    }
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        handlePointerInteraction(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches[0]) {
+        spawnSmokeBurst(e.touches[0].clientX, e.touches[0].clientY, 8);
+      }
+    }, { passive: true });
+
+    window.addEventListener('mousemove', (e) => {
+      handlePointerInteraction(e.clientX, e.clientY);
+    });
+
+    // Реакция на скролл — пускает волны дыма снизу
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.scrollY;
+      if (Math.abs(currentScroll - lastScroll) > 35) {
+        for (let i = 0; i < 4; i++) {
+          particles.push(new SmokeParticle(
+            Math.random() * width,
+            height - 10,
+            (Math.random() - 0.5) * 1.5,
+            -(1.5 + Math.random() * 2.2),
+            50 + Math.random() * 80,
+            0.14,
+            0.0018
+          ));
+        }
+        lastScroll = currentScroll;
+      }
+    }, { passive: true });
+
+    // Главный цикл анимации дыма
+    function animateSmoke() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Фоновые естественные восходящие клубы
+      if (particles.length < maxParticles && Math.random() < 0.35) {
+        particles.push(new SmokeParticle(
+          Math.random() * width,
+          height + 30,
+          (Math.random() - 0.5) * 0.8,
+          -(0.6 + Math.random() * 1.2),
+          60 + Math.random() * 80,
+          0.08 + Math.random() * 0.08,
+          0.0008
+        ));
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw();
+        if (p.alpha <= 0.005 || p.y < -p.size * 2) {
+          particles.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animateSmoke);
+    }
+    requestAnimationFrame(animateSmoke);
+
+
+    // ==========================================
+    // 2. ДАННЫЕ МЕНЮ И ЛОКАЛИЗАЦИИ (VI, RU, EN, ZH)
+    // ==========================================
+    let currentLang = 'ru';
+    let activeCategory = 'all';
+
+    // Категории
+    const categories = [
+      { id: 'all', icon: '✨', name: { vi: 'Tất cả', ru: 'Все позиции', en: 'All Items', zh: '全部' } },
+      { id: 'hookah', icon: '💨', name: { vi: 'Shisha Khói', ru: 'Кальяны Khói', en: 'Signature Hookah', zh: '特色水烟' } },
+      { id: 'cocktails', icon: '🍸', name: { vi: 'Cocktail Signature', ru: 'Дымные коктейли', en: 'Craft Cocktails', zh: '烟熏鸡尾酒' } },
+      { id: 'tea', icon: '🫖', name: { vi: 'Trà Nghi Lễ & Mocktail', ru: 'Чайные церемонии', en: 'Tea & Mocktails', zh: '茶艺与无醇特饮' } },
+      { id: 'bites', icon: '🥢', name: { vi: 'Món Nhắm Lounge', ru: 'Lounge Закуски', en: 'Lounge Bites', zh: '精致小食' } },
+    ];
+
+    // База данных блюд, кальянов и коктейлей
+    const menuData = [
+      // --- КАЛЬЯНЫ ---
+      {
+        id: 'hookah-mystic-mist',
+        category: 'hookah',
+        flavor: 'berry',
+        basePrice: 420000,
+        vietnameseName: 'Shisha Khói Huyền Bí Quả Mọng & Lavender',
+        strength: 2, // 1: Soft, 2: Medium, 3: Strong
+        selectedBowl: 'clay', // 'clay', 'grapefruit', 'pineapple'
+        selectedStrength: 2,
+        translations: {
+          vi: {
+            name: 'Khói Huyền Bí Quả Mọng (Mystic Mist)',
+            desc: 'Sự kết hợp tinh tế giữa việt quất rừng, hoa oải hương Provence và lớp đá tuyết thanh mát. Khói dày mịn, hương thơm lưu luyến.',
+            fact: 'Phối trộn từ dòng thuốc Darkside & Musthave cao cấp. Phù hợp nhất khi thưởng thức cùng một ly Negroni hoặc vang đỏ nhẹ.',
+          },
+          ru: {
+            name: 'Mystic Mist (Лесные ягоды & Прованская лаванда)',
+            desc: 'Фирменный дымный микс на основе черники, сочной ежевики, тонких нот лаванды и прохладного ментолового шлейфа. Плотный бархатный дым.',
+            fact: 'Бленд премиальных сортов табака Darkside & Musthave. Идеально раскрывается на глиняной чаше под контролем трёх кокосовых углей.',
+          },
+          en: {
+            name: 'Mystic Mist (Wild Berries & Lavender)',
+            desc: 'Signature blend of wild blueberries, French lavender essence, and a crisp glacial finish. Rich, velvety, lingering clouds.',
+            fact: 'Crafted with premium Darkside & Musthave dark leaves. Perfectly pairs with herbal gin cocktails or aged rum.',
+          },
+          zh: {
+            name: '神秘迷雾 (野莓与普罗旺斯薰衣草)',
+            desc: '融合野生蓝莓、黑莓与典雅薰衣草，伴随冰爽尾韵。烟雾浓郁细腻，香气持久迷人。',
+            fact: '选用顶级 Darkside & Musthave 烟丝调制，与草本金汤力是绝配搭档。',
+          }
+        }
+      },
+      {
+        id: 'hookah-obsidian-spiced',
+        category: 'hookah',
+        flavor: 'smoky',
+        basePrice: 450000,
+        vietnameseName: 'Shisha Obsidian Hương Gỗ & Sung Cay',
+        strength: 3,
+        selectedBowl: 'clay',
+        selectedStrength: 3,
+        translations: {
+          vi: {
+            name: 'Obsidian Velvet (Sung Chín & Gỗ Trầm Cay)',
+            desc: 'Đẳng cấp cho người sành shisha: vị sung mật ong, vỏ cam bergamot và dư vị trầm hương ấm áp. Độ nặng đầm sâu.',
+            fact: 'Sử dụng lá thuốc Tangiers Burley lên men tự nhiên. Giúp thư giãn sâu trong không gian âm nhạc downtempo của Khói Lounge.',
+          },
+          ru: {
+            name: 'Obsidian Velvet (Пряный инжир & Тёмный сандал)',
+            desc: 'Крепкий благородный микс для ценителей: спелый инжир, бергамот, тонкий древесный шлейф и тёплые пряности востока.',
+            fact: 'Создан на ферментированном листе Tangiers Burley. Раскрывает глубокий вкус на протяжении 80 минут курения.',
+          },
+          en: {
+            name: 'Obsidian Velvet (Spiced Fig & Dark Wood)',
+            desc: 'A connoisseur choice: ripe figs, bergamot peel, warm oriental spices, and an incense woody undertone. Bold & robust body.',
+            fact: 'Infused with Tangiers Burley tobacco. Ideal for slow sipping alongside our Smoked Old Fashioned.',
+          },
+          zh: {
+            name: '黑曜天鹅绒 (无花果与辛香檀木)',
+            desc: '浓郁深沉的特调：熟透无花果、佛手柑皮、东方香料与木质余韵，击喉感饱满有力。',
+            fact: '采用发酵 Tangiers Burley 烟草调制，建议搭配老式烟熏威士忌享用。',
+          }
+        }
+      },
+      {
+        id: 'hookah-citrus-frost',
+        category: 'hookah',
+        flavor: 'citrus',
+        basePrice: 400000,
+        vietnameseName: 'Shisha Bưởi Hồng & Chanh Bạc Hà Băng Giá',
+        strength: 1,
+        selectedBowl: 'clay',
+        selectedStrength: 1,
+        translations: {
+          vi: {
+            name: 'Băng Giá Cam Bưởi (Citrus Breeze & Ice)',
+            desc: 'Bùng nổ tươi mát từ tép bưởi hồng mọng nước, kẹo chanh vàng và tinh dầu bạc hà núi cao. Nhẹ nhàng, sảng khoái.',
+            fact: 'Rất được yêu thích bởi các bạn nữ và khách lần đầu trải nghiệm. Khuyên dùng nâng cấp lên chén bưởi hồng tươi để hương vị gấp đôi.',
+          },
+          ru: {
+            name: 'Citrus Breeze & Ice (Розовый грейпфрут & Ледяной лимон)',
+            desc: 'Взрывная свежесть сочного грейпфрута, сицилийского лимона и морозного эвкалипта. Легкая крепость, дарящая чистую свежесть.',
+            fact: 'Легкий табачный бленд Overdose & Al Fakher Gold. При заказе на свежем грейпфруте чаша дарит натуральный цитрусовый пар.',
+          },
+          en: {
+            name: 'Citrus Breeze & Ice (Pink Grapefruit & Cool Lime)',
+            desc: 'Burst of sweet pink grapefruit slices, candied lemon, and frosty mountain eucalyptus. Smooth, light, revitalizing.',
+            fact: 'Made with fine Overdose & Al Fakher leaves. Upgrade to a fresh grapefruit bowl for doubled natural juiciness.',
+          },
+          zh: {
+            name: '极地柑橘风暴 (粉红西柚与冰爽柠檬)',
+            desc: '清甜多汁的粉红西柚搭配西西里柠檬和高山桉树薄荷，轻盈冰爽，带来沁人心脾的畅快。',
+            fact: '推荐升级新鲜西柚果碗，果肉汁水渗透烟丝，果香更为纯粹自然。',
+          }
+        }
+      },
+      {
+        id: 'hookah-tropical-cloud',
+        category: 'hookah',
+        flavor: 'fresh',
+        basePrice: 420000,
+        vietnameseName: 'Shisha Mây Nhiệt Đới Xoài & Chanh Leo',
+        strength: 2,
+        selectedBowl: 'clay',
+        selectedStrength: 2,
+        translations: {
+          vi: {
+            name: 'Mây Nhiệt Đới (Tropical Cloud Mango & Passion)',
+            desc: 'Xoài cát chín mọng, chanh dây thanh chua và sả chanh Đà Lạt tạo nên tầng hương nhiệt đới bừng sáng.',
+            fact: 'Lấy cảm hứng từ trái cây nhiệt đới miền Trung Việt Nam. Cực kỳ hòa quyện khi thưởng thức trên bãi biển về đêm.',
+          },
+          ru: {
+            name: 'Tropical Cloud (Спелое манго & Маракуйя Далата)',
+            desc: 'Яркий тропический коктейль вкусов: сладкое манго, кислинка маракуйи, стебли далатского лемонграсса и легкий холодок.',
+            fact: 'Сбалансированная смесь средней крепости. Авторский рецепт главного кальянного сомелье бара KHÓI.',
+          },
+          en: {
+            name: 'Tropical Cloud (Ripe Mango & Da Lat Passionfruit)',
+            desc: 'Sweet ripe mango pulp, tangy passionfruit drizzle, and Da Lat lemongrass on crushed ice. Balanced and deeply aromatic.',
+            fact: 'Inspired by the vibrant coastal flavors of Central Vietnam. A house favorite blend since 2024.',
+          },
+          zh: {
+            name: '热带云雾 (熟芒果与大叻百香果)',
+            desc: '浓香芒果肉、酸甜百香果汁与大叻香茅相得益彰，带来仿佛置身热带海岸的惬意体验。',
+            fact: '中等浓度特调，百香果的清爽果酸完美平衡了烟草的厚度。',
+          }
+        }
+      },
+
+      // --- КОКТЕЙЛИ ---
+      {
+        id: 'cocktail-smoked-old-fashioned',
+        category: 'cocktails',
+        flavor: 'smoky',
+        basePrice: 220000,
+        vietnameseName: 'Cocktail Old Fashioned Xông Khói Gỗ Sồi',
+        translations: {
+          vi: {
+            name: 'Khói Smoked Old Fashioned',
+            desc: 'Rượu Bourbon ủ thùng gỗ sồi, đường mía thô, bitter cam Angostura, xông khói gỗ táo ngay tại bàn dưới vòm thủy tinh cloche.',
+            fact: 'Nghi thức mở nắp vòm khói tỏa nghi ngút trước mắt quý khách. Khói gỗ táo làm mềm mượt vị nồng nàn của rượu bourbon.',
+          },
+          ru: {
+            name: 'Khói Smoked Old Fashioned (Подача под дымным куполом)',
+            desc: 'Выдержанный бурбон, тростниковый сахар, апельсиновый биттер и живой дым яблоневой щепы, подаваемый под стеклянным клошем.',
+            fact: 'Официант приподнимает купол прямо перед вами, наполняя воздух ароматом копченого дуба. Культовая классика бара KHÓI.',
+          },
+          en: {
+            name: 'Khói Smoked Old Fashioned (Cloche Presentation)',
+            desc: 'Aged Kentucky bourbon, raw demerara syrup, Angostura orange bitters, smoked with applewood under a crystal cloche at your table.',
+            fact: 'The glass cloche is lifted tableside, releasing an aromatic oak cloud. Enhances the caramel and vanilla notes of the whiskey.',
+          },
+          zh: {
+            name: '烟熏古典鸡尾酒 (水晶罩现场揭幕)',
+            desc: '陈年波旁威士忌、原蔗糖浆、安哥斯图拉柑橘苦精，上桌时在水晶玻璃罩下以苹果木现熏呈现。',
+            fact: '现场揭开烟雾缭绕的罩子，木质烟熏香气扑鼻而来，极大提升了波旁的焦糖与香草风味。',
+          }
+        }
+      },
+      {
+        id: 'cocktail-neon-dragon-fizz',
+        category: 'cocktails',
+        flavor: 'citrus',
+        basePrice: 195000,
+        vietnameseName: 'Cocktail Thanh Long Phát Sáng & Gin Sông Cái',
+        translations: {
+          vi: {
+            name: 'Neon Dragon Fizz (Gin Sông Cái & Thanh Long Đỏ)',
+            desc: 'Rượu gin thủ công Sông Cái của Việt Nam, siro thanh long ruột đỏ tươi, nước ép yuzu Nhật Bản và tonic bọt sủi lấp lánh.',
+            fact: 'Màu sắc tím dạ quang tự nhiên phát sáng nhẹ dưới ánh đèn lounge. Gin Sông Cái chứa 14 loại thảo mộc rừng Tây Bắc.',
+          },
+          ru: {
+            name: 'Neon Dragon Fizz (Вьетнамский джин Sông Cái & Питахайя)',
+            desc: 'Крафтовый вьетнамский джин Sông Cái, пюре красного драгонфрута, японский цитрус юдзу и искристый премиальный тоник.',
+            fact: 'Джин дистиллируется в высокогорьях Вьетнама из 14 дикорастущих трав. Бокал светится чарующим неоновым пурпуром.',
+          },
+          en: {
+            name: 'Neon Dragon Fizz (Sông Cái Artisanal Gin & Red Pitaya)',
+            desc: 'Vietnamese mountain craft gin, fresh red dragonfruit reduction, Japanese yuzu, and sparkling effervescent tonic.',
+            fact: 'Features Sông Cái Gin infused with 14 wild highland botanicals. Glows with a radiant magenta neon hue.',
+          },
+          zh: {
+            name: '霓虹火龙晶浪 (Sông Cái 金酒与红心火龙果)',
+            desc: '越南本土高山精酿 Sông Cái 金酒、新鲜红心火龙果原汁、日本柚子与气泡汤力水。',
+            fact: '在酒吧幽暗灯光下散发自然的莹润紫红霓虹光泽，金酒融入了14种越南特有的野生植物香气。',
+          }
+        }
+      },
+      {
+        id: 'cocktail-spicy-mezcalita',
+        category: 'cocktails',
+        flavor: 'smoky',
+        basePrice: 210000,
+        vietnameseName: 'Cocktail Mezcalita Cay Nồng Chanh Dây & Ớt Phú Quốc',
+        translations: {
+          vi: {
+            name: 'Spicy Mezcalita (Mezcal Khói & Ớt Tiêu Phú Quốc)',
+            desc: 'Rượu Mezcal thủ công Oaxaca với hương khói rơm đậm đà, chanh leo nhiệt đới, rượu cam Cointreau và viền muối ớt Phú Quốc.',
+            fact: 'Hương khói của rượu thùa Mezcal kết hợp vị cay ấm nồng của tiêu và ớt đảo Phú Quốc tạo nên trải nghiệm bùng nổ vị giác.',
+          },
+          ru: {
+            name: 'Spicy Mezcalita (Дымный мескаль & Перец Фукуока)',
+            desc: 'Аутентичный мексиканский мескаль с ароматом кострового дыма, пюре маракуйи, лайм и кайма из соли с копченым перцем с острова Фукуок.',
+            fact: 'Двойная дымность мескаля и пикантный баланс тропической маракуйи. Главный фаворит ценителей контрастных ощущений.',
+          },
+          en: {
+            name: 'Spicy Mezcalita (Smoked Mezcal & Phu Quoc Chili)',
+            desc: 'Oaxacan smoky agave mezcal, fresh passionfruit pulp, lime juice, Cointreau, and a crushed Phu Quoc chili-salt rim.',
+            fact: 'The primal smokiness of roasted agave meets the spicy island sea salt of Phu Quoc. Bold, savory, unforgettable.',
+          },
+          zh: {
+            name: '辛香烟熏梅斯卡尔 (烟熏梅斯卡尔与富国岛胡椒)',
+            desc: '墨西哥瓦哈卡烟熏龙舌兰酒、百香果纯浆、青柠汁与富国岛特产辣椒海盐杯口。',
+            fact: '传统泥坑烤制的龙舌兰烟熏气，与越南顶级富国岛胡椒的辛香在舌尖碰撞出绝妙火花。',
+          }
+        }
+      },
+      {
+        id: 'cocktail-matcha-cloud-sour',
+        category: 'cocktails',
+        flavor: 'fresh',
+        basePrice: 190000,
+        vietnameseName: 'Cocktail Mây Xanh Matcha & Kem Dừa Béo Ngậy',
+        translations: {
+          vi: {
+            name: 'Cloud Nine Matcha Sour (Trà Xanh & Bọt Sữa Dừa)',
+            desc: 'Matcha Uji cao cấp, rượu rum trắng, nước dừa Bến Tre tươi, chanh vàng và lớp foam nhung bồng bềnh như mây.',
+            fact: 'Một ly cocktail tráng miệng hoàn hảo, mềm mượt như lụa. Được phục vụ cùng bột matcha rắc hình lá phong.',
+          },
+          ru: {
+            name: 'Cloud Nine Matcha Sour (Японская матча & Кокосовая пена)',
+            desc: 'Церемониальная матча Uji, белый ром, свежая кокосовая вода из провинции Бенче, лайм и облако шелковистой пены.',
+            fact: 'Идеальный бархатный баланс кремовой текстуры и свежести зелёного чая. Подаётся с дымящимся листочком мяты.',
+          },
+          en: {
+            name: 'Cloud Nine Matcha Sour (Ceremonial Matcha & Coconut Cloud)',
+            desc: 'Uji ceremonial grade green tea, smooth white rum, fresh Bến Tre coconut essence, lime, and silky aquafaba foam.',
+            fact: 'Velvety and refreshing. A contemporary fusion of Japanese tea ritual and tropical Vietnamese coconut groves.',
+          },
+          zh: {
+            name: '九重云端抹茶酸 (宇治抹茶与椰香奶沫)',
+            desc: '日本宇治级别抹茶粉、顺滑白朗姆酒、槟椥新鲜椰青水，覆以轻盈如云朵般的丝绒奶沫。',
+            fact: '兼具茶道仪式感与热带风情的低度甜美特调，入口丝滑细腻。',
+          }
+        }
+      },
+
+      // --- ЧАЙНЫЕ ЦЕРЕМОНИИ И MOCKTAILS ---
+      {
+        id: 'tea-imperial-oolong-siphon',
+        category: 'tea',
+        flavor: 'smoky',
+        basePrice: 180000,
+        vietnameseName: 'Nghi Lễ Trà Ô Long Sữa Bình Siphon Ánh Lửa',
+        translations: {
+          vi: {
+            name: 'Nghi Thức Trà Ô Long Siphon (Imperial Milk Oolong)',
+            desc: 'Trà ô long sữa Đài Loan chiết xuất bằng bình Siphon chân không ánh lửa halogen. Thơm hương hoa lan, ngọt hậu sâu.',
+            fact: 'Pha chế biểu diễn trực tiếp với bình thủy tinh chân không. Trà giúp làm sạch vòm họng và nâng tầm vị giác khi hút shisha.',
+          },
+          ru: {
+            name: 'Сифонная чайная церемония (Молочный улун Imperial)',
+            desc: 'Премиальный высокогорный молочный улун, завариваемый в вакуумном стеклянном сифоне на живом пламени. Сливочный шлейф и ноты орхидеи.',
+            fact: 'Красивое шоу заваривания в сифоне. Тёплый чай бережно очищает рецепторы и идеально гармонирует с плотным кальянным дымом.',
+          },
+          en: {
+            name: 'Imperial Milk Oolong Siphon Ceremony',
+            desc: 'High-mountain Taiwanese milk oolong extracted tableside with a vacuum glass siphon. Delicate floral aroma with sweet orchid finish.',
+            fact: 'The vacuum siphon creates a mesmerizing table spectacle while maintaining the precise optimal brewing temperature.',
+          },
+          zh: {
+            name: '虹吸壶皇家金萱奶香乌龙茶艺',
+            desc: '高山金萱奶香乌龙，以经典玻璃虹吸壶现场文火萃取。兰花幽香与天然奶韵悠长回甘。',
+            fact: '热茶可温润口腔、舒缓味蕾，是品鉴水烟时的绝佳伴侣。',
+          }
+        }
+      },
+      {
+        id: 'mocktail-smoky-lavender-tonic',
+        category: 'tea',
+        flavor: 'berry',
+        basePrice: 140000,
+        vietnameseName: 'Mocktail Oải Hương Xông Khói Không Cồn',
+        translations: {
+          vi: {
+            name: 'Smoky Lavender Tonic (Mocktail 0% Cồn)',
+            desc: 'Chiết xuất thảo mộc bách xù không cồn, siro oải hương hữu cơ, nhánh hương thảo hun khói và nước khoáng sủi bọt cao cấp.',
+            fact: 'Thức uống thanh tao dành cho những ai tìm kiếm sự thư giãn trọn vẹn mà không có nồng độ cồn.',
+          },
+          ru: {
+            name: 'Smoky Lavender Tonic (Безалкогольный эликсир)',
+            desc: 'Безалкогольный можжевеловый дистиллят, кордиал из прованской лаванды, дымящаяся веточка розмарина и ледяной содовый тоник.',
+            fact: 'Изысканный крафтовый моктейль для тех, кто за рулём или предпочитает чистую осознанность в атмосфере ночного бара.',
+          },
+          en: {
+            name: 'Smoky Lavender Zero-Proof Tonic',
+            desc: 'Botanical zero-proof juniper elixir, organic lavender cordial, torched fragrant rosemary sprig, and premium tonic.',
+            fact: 'Delivers all the sophisticated smokiness and aroma of a signature cocktail without a single drop of alcohol.',
+          },
+          zh: {
+            name: '烟熏薰衣草无醇气泡特饮 (Zero-Proof)',
+            desc: '蒸馏杜松子无醇草本液、天然薰衣草糖浆、火枪炙烤迷迭香与高级冰感气泡水。',
+            fact: '为不饮酒的宾客特别设计的精致特调，兼具香气与微醺仪式感。',
+          }
+        }
+      },
+
+      // --- ЗАКУСКИ К НАПИТКАМ ---
+      {
+        id: 'bite-truffle-fries',
+        category: 'bites',
+        flavor: 'smoky',
+        basePrice: 135000,
+        vietnameseName: 'Khoai Tây Chiên Nấm Truffle & Sốt Aioli Khói',
+        translations: {
+          vi: {
+            name: 'Khoai Tây Chiên Truffle & Sốt Aioli Khói',
+            desc: 'Khoai tây vàng giòn rưới dầu nấm truffle đen thơm lừng, phủ phô mai Parmesan bào nhuyễn và sốt aioli xông khói tự làm.',
+            fact: 'Món ăn kèm hoàn hảo số một cho mọi buổi trò chuyện bên ly cocktail và làn khói ấm.',
+          },
+          ru: {
+            name: 'Картофель фри Truffle & Копченый соус Айоли',
+            desc: 'Хрустящий картофель с ароматным маслом черного трюфеля, щедрым слоем выдержанного пармезана и авторским копченым соусом айоли.',
+            fact: 'Хрустящая корочка и насыщенный трюфельный аромат мгновенно пробуждают аппетит в лаунж-баре.',
+          },
+          en: {
+            name: 'Truffle Fries with Smoked House Aioli',
+            desc: 'Golden crispy shoestring fries tossed in black truffle oil, aged shaved Parmesan, paired with our house-smoked garlic aioli.',
+            fact: 'The ultimate lounge finger food, designed to complement rich cocktails and smoky sessions.',
+          },
+          zh: {
+            name: '黑松露金黄薯条配烟熏蒜香蛋黄酱',
+            desc: '黑松露油现炸酥脆薯条，洒满陈年帕玛森干酪碎，搭配独家烟熏蒜香酱。',
+            fact: '香气浓郁诱人，是佐酒交谈时备受青睐的招牌下酒小点。',
+          }
+        }
+      },
+      {
+        id: 'bite-wagyu-sliders',
+        category: 'bites',
+        flavor: 'smoky',
+        basePrice: 240000,
+        vietnameseName: 'Bộ Ba Bánh Mini Burger Bò Wagyu Xông Khói',
+        translations: {
+          vi: {
+            name: 'Mini Burger Bò Wagyu Xông Khói (3 chiếc)',
+            desc: 'Thịt bò Wagyu mềm mọng nướng than hoa, phô mai Cheddar hun khói, hành tây caramen đậm đà và vỏ bánh brioche bơ nướng.',
+            fact: 'Thịt bò Wagyu vân mỡ cẩm thạch tan chảy trong miệng, mang lại sự thỏa mãn tuyệt đối giữa đêm muộn.',
+          },
+          ru: {
+            name: 'Wagyu Beef Sliders (Сет из 3 мини-бургеров)',
+            desc: 'Сочная мраморная говядина вагю на углях, копченый сыр чеддер, карамелизованный лук в портвейне и сливочные булочки бриошь.',
+            fact: 'Мясо готовится на открытом огне с легким прикосновением дыма. Сытная и премиальная закуска для компании.',
+          },
+          en: {
+            name: 'Smoked Wagyu Beef Sliders (Set of 3)',
+            desc: 'Juicy chargrilled Wagyu beef patties, melted smoked cheddar, balsamic caramelized onions, nestled in toasted butter brioche buns.',
+            fact: 'Marbled Wagyu beef grilled with fragrant embers, pairing deliciously with peaty whiskies and smoky hookahs.',
+          },
+          zh: {
+            name: '和牛烟熏迷你汉堡 (3枚入)',
+            desc: '炭烤多汁和牛肉饼、融化烟熏切达芝士、焦糖洋葱，夹于松软黄油布里欧修面包中。',
+            fact: '高等级和牛油脂丰腴，是深夜搭配威士忌的最佳美味。',
+          }
+        }
+      }
+    ];
+
+    // Локализованные тексты интерфейса
+    const translationsUI = {
+      ru: {
+        aboutBtn: 'О блюде & нотах ▾',
+        cultureTitle: 'Вкусовой профиль & История',
+        orderHint: 'Укажите пальцем на вьетнамское название в плашке для быстрого заказа официанту.',
+        addressLabel: 'Локация и бронирование',
+        aionSupported: 'Меню создано при поддержке AION',
+        aionTitle: 'Приложение для жизни за границей',
+        aionDesc: 'Все места, услуги, сервисы в одном месте',
+        aionBtn: 'Открыть AION',
+        currency: '₫',
+        bowlLabel: 'Чаша:',
+        bowlClay: 'Глина',
+        bowlGrapefruit: 'Грейпфрут (+100k)',
+        bowlPineapple: 'Ананас (+150k)',
+        strengthLabel: 'Крепость:',
+        strSoft: 'Мягкий',
+        strMed: 'Средний',
+        strHard: 'Крепкий',
+        pairing: 'Идеальное сочетание:',
+        filterMood: 'Интерактивный фильтр вкуса:',
+        hintSmoke: 'Дотроньтесь до экрана для дыма 💨'
+      },
+      vi: {
+        aboutBtn: 'Về hương vị & câu chuyện ▾',
+        cultureTitle: 'Hồ sơ hương vị & Nguồn gốc',
+        orderHint: 'Chỉ tay vào khung tên tiếng Việt để gọi món chính xác với nhân viên phục vụ.',
+        addressLabel: 'Địa chỉ & Đặt bàn',
+        aionSupported: 'Thực đơn được tạo với sự hỗ trợ của AION',
+        aionTitle: 'Ứng dụng tiện ích cuộc sống nước ngoài',
+        aionDesc: 'Tất cả địa điểm, dịch vụ và tiện ích tại một nơi',
+        aionBtn: 'Mở AION',
+        currency: '₫',
+        bowlLabel: 'Chén Shisha:',
+        bowlClay: 'Chén đất gốm',
+        bowlGrapefruit: 'Bưởi hồng (+100k)',
+        bowlPineapple: 'Dứa tươi (+150k)',
+        strengthLabel: 'Độ nặng:',
+        strSoft: 'Nhẹ',
+        strMed: 'Vừa',
+        strHard: 'Đậm',
+        pairing: 'Gợi ý kết hợp:',
+        filterMood: 'Bộ lọc vị tương tác:',
+        hintSmoke: 'Chạm vào màn hình để tạo khói 💨'
+      },
+      en: {
+        aboutBtn: 'About flavor & story ▾',
+        cultureTitle: 'Tasting Notes & Heritage',
+        orderHint: 'Point directly to the Vietnamese box to order easily with your waiter.',
+        addressLabel: 'Location & Reservations',
+        aionSupported: 'Menu powered by AION',
+        aionTitle: 'Essential app for living abroad',
+        aionDesc: 'All places, services, and local utilities in one place',
+        aionBtn: 'Open AION',
+        currency: '₫',
+        bowlLabel: 'Bowl:',
+        bowlClay: 'Clay Bowl',
+        bowlGrapefruit: 'Grapefruit (+100k)',
+        bowlPineapple: 'Pineapple (+150k)',
+        strengthLabel: 'Strength:',
+        strSoft: 'Soft',
+        strMed: 'Medium',
+        strHard: 'Bold',
+        pairing: 'Recommended Pairing:',
+        filterMood: 'Interactive Mood Filter:',
+        hintSmoke: 'Touch screen to create smoke 💨'
+      },
+      zh: {
+        aboutBtn: '品鉴风味与故事 ▾',
+        cultureTitle: '风味图谱与溯源',
+        orderHint: '向服务员出示方框内的越南语名称，即可精准下单。',
+        addressLabel: '酒吧地址与订座',
+        aionSupported: '本菜单由 AION 鼎力支持制作',
+        aionTitle: '海外旅居生活必备应用',
+        aionDesc: '汇聚周边全部地点、服务与优质设施',
+        aionBtn: '打开 AION',
+        currency: '₫',
+        bowlLabel: '烟碗选择:',
+        bowlClay: '经典陶土碗',
+        bowlGrapefruit: '新鲜西柚果碗 (+100k)',
+        bowlPineapple: '新鲜菠萝果碗 (+150k)',
+        strengthLabel: '浓郁浓度:',
+        strSoft: '轻柔',
+        strMed: '适中',
+        strHard: '浓烈',
+        pairing: '甄选搭配推荐:',
+        filterMood: '互动风味筛选:',
+        hintSmoke: '触碰屏幕即可生成烟雾 💨'
+      }
+    };
+
+
+    // ==========================================
+    // 3. РЕНДЕРИНГ ИНТЕРФЕЙСА
+    // ==========================================
+
+    function formatVND(amount) {
+      return new Intl.NumberFormat('vi-VN').format(amount) + ' ₫';
+    }
+
+    // Расчет цены с учетом чаши для кальяна
+    function getItemPrice(item) {
+      let price = item.basePrice;
+      if (item.category === 'hookah') {
+        if (item.selectedBowl === 'grapefruit') price += 100000;
+        if (item.selectedBowl === 'pineapple') price += 150000;
+      }
+      return price;
+    }
+
+    // Рендер категорий
+    function renderCategories() {
+      const nav = document.getElementById('category-pills');
+      nav.innerHTML = categories.map(cat => {
+        const isActive = activeCategory === cat.id;
+        const name = cat.name[currentLang] || cat.name.vi;
+        return `
+          <button 
+            onclick="filterCategory('${cat.id}')"
+            data-category="${cat.id}"
+            class="cat-pill tap-spring whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 border flex items-center gap-1.5 ${
+              isActive 
+                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)]' 
+                : 'bg-white/5 border-white/10 text-stone-300 hover:bg-white/10'
+            }"
+          >
+            <span>${cat.icon}</span>
+            <span>${name}</span>
+          </button>
+        `;
+      }).join('');
+      updateScrollRunnerButtons();
+    }
+
+    function filterCategory(catId) {
+      activeCategory = catId;
+      renderCategories();
+      renderMenu();
+    }
+
+    function scrollCategories(amount) {
+      const nav = document.getElementById('category-pills');
+      if (nav) nav.scrollBy({ left: amount, behavior: 'smooth' });
+      setTimeout(updateScrollRunnerButtons, 250);
+    }
+
+    function updateScrollRunnerButtons() {
+      const nav = document.getElementById('category-pills');
+      const leftBtn = document.getElementById('cat-scroll-left');
+      const rightBtn = document.getElementById('cat-scroll-right');
+      if (!nav || !leftBtn || !rightBtn) return;
+      
+      const scrollLeft = nav.scrollLeft;
+      const maxScroll = nav.scrollWidth - nav.clientWidth;
+
+      leftBtn.disabled = scrollLeft <= 5;
+      leftBtn.style.opacity = scrollLeft <= 5 ? '0.3' : '1';
+
+      rightBtn.disabled = scrollLeft >= maxScroll - 5;
+      rightBtn.style.opacity = scrollLeft >= maxScroll - 5 ? '0.3' : '1';
+    }
+
+    // Кастомизация кальяна прямо в карточке
+    function setHookahBowl(itemId, bowlType) {
+      const item = menuData.find(i => i.id === itemId);
+      if (!item) return;
+      item.selectedBowl = bowlType;
+      spawnSmokeBurst(window.innerWidth / 2, window.innerHeight * 0.5, 10);
+      renderMenu();
+    }
+
+    function setHookahStrength(itemId, strLevel) {
+      const item = menuData.find(i => i.id === itemId);
+      if (!item) return;
+      item.selectedStrength = strLevel;
+      renderMenu();
+    }
+
+    // Рендеринг карточек меню: отображаются ВСЕ вкусы
+    function renderMenu() {
+      const container = document.getElementById('menu-container');
+      const ui = translationsUI[currentLang];
+
+      const filtered = activeCategory === 'all' 
+        ? menuData 
+        : menuData.filter(i => i.category === activeCategory);
+
+      container.innerHTML = filtered.map(item => {
+        const trans = item.translations[currentLang] || item.translations.ru || item.translations.vi;
+        const isHookah = item.category === 'hookah';
+        const currentPrice = getItemPrice(item);
+
+        return `
+          <article class="lounge-card rounded-[22px] p-4 text-stone-200">
+            
+            <!-- ВЕРХНЯЯ СТРОКА: НАЗВАНИЕ И ЦЕНА СО СВЕЧЕНИЕМ -->
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <div class="flex items-center gap-1.5 mb-1">
+                  ${isHookah ? '<span class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded font-semibold text-[10px]">HOOKAH</span>' : ''}
+                  ${item.category === 'cocktails' ? '<span class="text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 py-0.2 rounded font-semibold text-[10px]">COCKTAIL</span>' : ''}
+                  ${item.category === 'tea' ? '<span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-semibold text-[10px]">CEREMONY</span>' : ''}
+                  ${item.category === 'bites' ? '<span class="text-xs bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.2 rounded font-semibold text-[10px]">BITES</span>' : ''}
+                </div>
+                <h3 class="font-bold text-[15px] leading-snug text-white">
+                  ${trans.name}
+                </h3>
+              </div>
+
+              <!-- ЦЕНОВАЯ ПИЛЮЛЯ -->
+              <span class="font-display font-extrabold text-sm whitespace-nowrap tracking-tight rounded-full px-3 py-1 bg-amber-500/15 border border-amber-400/40 text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.25)] flex-shrink-0">
+                ${formatVND(currentPrice)}
+              </span>
+            </div>
+
+            <!-- POINT-TO-ORDER: ПОЛНОЕ ВЬЕТНАМСКОЕ НАЗВАНИЕ ДЛЯ ОФИЦИАНТА -->
+            <div class="mt-2.5">
+              <div class="rounded-xl px-2.5 py-1.5 inline-flex items-center gap-2 max-w-full bg-white/5 border border-white/10">
+                <svg class="w-3.5 h-2.5 rounded-[1px] shadow-sm overflow-hidden flex-shrink-0" viewBox="0 0 30 20">
+                  <rect width="30" height="20" fill="#DA251D"/>
+                  <polygon points="15,4 17.35,11.24 11.2,6.76 18.8,6.76 12.65,11.24" fill="#FFFF00"/>
+                </svg>
+                <span class="text-[11.5px] font-bold font-sans tracking-wide leading-tight text-stone-200">
+                  ${item.vietnameseName}
+                </span>
+              </div>
+            </div>
+
+            <!-- ОПИСАНИЕ БЛЮДА/МИКСА (БЕЗ ОБРЕЗКИ И ТРОЕТОЧИЙ) -->
+            <p class="text-[12px] leading-relaxed pt-2 text-stone-400">
+              ${trans.desc}
+            </p>
+
+            <!-- ИНТЕРАКТИВНЫЙ КОНСТРУКТОР ДЛЯ КАЛЬЯНОВ: ВЫБОР ЧАШИ И КРЕПОСТИ -->
+            ${isHookah ? `
+              <div class="mt-3 pt-2.5 border-t border-white/10 space-y-2 text-xs">
+                
+                <!-- Выбор чаши -->
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-semibold text-stone-400">${ui.bowlLabel}</span>
+                  <div class="flex gap-1">
+                    <button 
+                      onclick="setHookahBowl('${item.id}', 'clay')" 
+                      class="chip-btn px-2 py-0.5 rounded-lg border text-[10.5px] font-medium ${item.selectedBowl === 'clay' ? 'active' : 'bg-white/5 border-white/10 text-stone-400'}"
+                    >
+                      ${ui.bowlClay}
+                    </button>
+                    <button 
+                      onclick="setHookahBowl('${item.id}', 'grapefruit')" 
+                      class="chip-btn px-2 py-0.5 rounded-lg border text-[10.5px] font-medium ${item.selectedBowl === 'grapefruit' ? 'active' : 'bg-white/5 border-white/10 text-stone-400'}"
+                    >
+                      ${ui.bowlGrapefruit}
+                    </button>
+                    <button 
+                      onclick="setHookahBowl('${item.id}', 'pineapple')" 
+                      class="chip-btn px-2 py-0.5 rounded-lg border text-[10.5px] font-medium ${item.selectedBowl === 'pineapple' ? 'active' : 'bg-white/5 border-white/10 text-stone-400'}"
+                    >
+                      ${ui.bowlPineapple}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Выбор крепости (3 кольца дыма) -->
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-semibold text-stone-400">${ui.strengthLabel}</span>
+                  <div class="flex items-center gap-1.5">
+                    <div class="flex items-center mr-1">
+                      <span class="smoke-ring ${item.selectedStrength >= 1 ? 'filled' : ''}"></span>
+                      <span class="smoke-ring ${item.selectedStrength >= 2 ? 'filled' : ''}"></span>
+                      <span class="smoke-ring ${item.selectedStrength >= 3 ? 'filled' : ''}"></span>
+                    </div>
+                    <button onclick="setHookahStrength('${item.id}', 1)" class="px-1.5 py-0.5 rounded text-[10px] ${item.selectedStrength === 1 ? 'text-amber-300 font-bold bg-amber-500/20' : 'text-stone-500'}">${ui.strSoft}</button>
+                    <button onclick="setHookahStrength('${item.id}', 2)" class="px-1.5 py-0.5 rounded text-[10px] ${item.selectedStrength === 2 ? 'text-amber-300 font-bold bg-amber-500/20' : 'text-stone-500'}">${ui.strMed}</button>
+                    <button onclick="setHookahStrength('${item.id}', 3)" class="px-1.5 py-0.5 rounded text-[10px] ${item.selectedStrength === 3 ? 'text-amber-300 font-bold bg-amber-500/20' : 'text-stone-500'}">${ui.strHard}</button>
+                  </div>
+                </div>
+
+              </div>
+            ` : ''}
+
+            <!-- КНОПКА АККОРДЕОНА: О БЛЮДЕ / ИСТОРИИ -->
+            <div class="pt-2 flex items-center justify-between">
+              <button 
+                onclick="toggleAccordion('${item.id}')"
+                id="btn-accordion-${item.id}"
+                class="text-[11.5px] font-semibold inline-flex items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors focus:outline-none"
+                aria-expanded="false"
+              >
+                <span>${ui.aboutBtn}</span>
+                <svg id="arrow-${item.id}" class="w-3 h-3 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- СОДЕРЖИМОЕ АККОРДЕОНА (ФАКТЫ, НОТЫ, ИСТОРИЯ) -->
+            <div id="content-${item.id}" class="fact-accordion-content">
+              <div class="mt-2.5 rounded-xl p-3 text-xs leading-relaxed space-y-1.5 bg-black/40 border border-white/5">
+                <div class="flex items-center gap-1.5 font-bold text-[11px] text-amber-400">
+                  <span>✨</span>
+                  <span class="tracking-tight">${ui.cultureTitle}</span>
+                </div>
+                <p class="text-[11.5px] leading-relaxed pl-3 italic border-l-2 border-amber-400 text-stone-300">
+                  "${trans.fact}"
+                </p>
+              </div>
+            </div>
+
+          </article>
+        `;
+      }).join('');
+    }
+
+    // Раскрытие аккордеона
+    function toggleAccordion(itemId) {
+      const content = document.getElementById(`content-${itemId}`);
+      const arrow = document.getElementById(`arrow-${itemId}`);
+      const btn = document.getElementById(`btn-accordion-${itemId}`);
+      if (!content) return;
+      const isOpen = content.classList.contains('open');
+
+      if (isOpen) {
+        content.classList.remove('open');
+        arrow.classList.remove('rotate-180');
+        btn.setAttribute('aria-expanded', 'false');
+      } else {
+        content.classList.add('open');
+        arrow.classList.add('rotate-180');
+        btn.setAttribute('aria-expanded', 'true');
+        // Пускаем мягкую струю дыма при раскрытии информации
+        spawnSmokeBurst(window.innerWidth / 2, window.innerHeight * 0.45, 8);
+      }
+    }
+
+    // Смена языка интерфейса
+    function changeLanguage(lang) {
+      currentLang = lang;
+      
+      // Стилизация активной кнопки флага
+      ['vi', 'ru', 'en', 'zh'].forEach(l => {
+        const btn = document.getElementById(`lang-btn-${l}`);
+        if (!btn) return;
+        if (l === lang) {
+          btn.className = `tap-spring w-7 h-7 flex items-center justify-center rounded-lg bg-white/20 shadow-xs scale-105 opacity-100 ring-1 ring-amber-400/60`;
+        } else {
+          btn.className = `tap-spring w-7 h-7 flex items-center justify-center rounded-lg opacity-60 hover:opacity-100`;
+        }
+      });
+
+      const ui = translationsUI[lang];
+      document.getElementById('order-hint-text').innerText = ui.orderHint;
+      document.getElementById('label-address-title').innerText = ui.addressLabel;
+      document.getElementById('aion-supported-text').innerText = ui.aionSupported;
+      document.getElementById('aion-title-text').innerText = ui.aionTitle;
+      document.getElementById('aion-desc-text').innerText = ui.aionDesc;
+      document.getElementById('aion-btn-text').innerText = ui.aionBtn;
+
+      renderCategories();
+      renderMenu();
+    }
+
+    // Инициализация при загрузке
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCategories();
+      renderMenu();
+
+      const nav = document.getElementById('category-pills');
+      if (nav) {
+        nav.addEventListener('scroll', updateScrollRunnerButtons);
+        window.addEventListener('resize', updateScrollRunnerButtons);
+      }
+    });
+  </script>
+</body>
+</html>
